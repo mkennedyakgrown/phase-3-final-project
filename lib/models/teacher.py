@@ -1,5 +1,9 @@
 # lib/models/teacher.py
 from models.__init__ import CONN, CURSOR
+from models.student import Student
+from models.class_name import Class_Name
+from models.teacher_class_name import Teacher_Class_Name
+from models.student_class_name import Student_Class_Name
 
 class Teacher:
 
@@ -91,7 +95,7 @@ class Teacher:
     def create(cls, name):
         """ Create a new teacher instance and save it to the database. """
 
-        teacher = Teacher(name)
+        teacher = cls(name)
         teacher.save()
         return teacher
     
@@ -145,3 +149,18 @@ class Teacher:
         row = CURSOR.execute(sql, (name,)).fetchall()
 
         return cls.instance_from_db(row) if row else None
+    
+    def get_classes(self):
+        """ Return all the classes that the teacher has. """
+
+        rows = Teacher_Class_Name.find_by_teacher_id(self.id)
+
+        return [Class_Name.instance_from_db(row[1]) for row in rows]
+
+    def get_students(self):
+        """ Return all the students that the teacher has. """
+        classes = self.get_classes()
+
+        rows = Student_Class_Name.find_by_class_name_id(classes)
+
+        return [Student.instance_from_db(row[2]) for row in rows]
