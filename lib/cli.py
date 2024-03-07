@@ -1,5 +1,6 @@
 # lib/cli.py
 
+import click
 from helpers import (
     exit_program,
     helper_1
