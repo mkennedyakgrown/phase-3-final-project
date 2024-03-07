@@ -1,7 +1,5 @@
 # lib/models/student_class_name.py
 from models.__init__ import CONN, CURSOR
-from models.student import Student
-from models.class_name import Class_Name
 
 class Student_Class_Name:
 
@@ -24,6 +22,7 @@ class Student_Class_Name:
     
     @class_name_id.setter
     def class_name_id(self, class_name_id):
+        from models.class_name import Class_Name
         if isinstance(class_name_id, int) and Class_Name.all[class_name_id]:
             self._class_name_id = class_name_id
         else:
@@ -37,6 +36,7 @@ class Student_Class_Name:
     
     @student_id.setter
     def student_id(self, student_id):
+        from models.student import Student
         if isinstance(student_id, int) and Student.all[student_id]:
             self._student_id = student_id
         else:
@@ -51,7 +51,8 @@ class Student_Class_Name:
             CREATE TABLE IF NOT EXISTS student_class_name (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             class_name_id INTEGER NOT NULL,
-            student_id INTEGER NOT NULL,
+            student_id INTEGER NOT NULL
+        );
         """
 
         CURSOR.execute(sql)

@@ -1,9 +1,5 @@
 # lib/models/teacher.py
 from models.__init__ import CONN, CURSOR
-from models.student import Student
-from models.class_name import Class_Name
-from models.teacher_class_name import Teacher_Class_Name
-from models.student_class_name import Student_Class_Name
 
 class Teacher:
 
@@ -152,6 +148,8 @@ class Teacher:
     
     def get_classes(self):
         """ Return all the classes that the teacher has. """
+        from models.class_name import Class_Name
+        from models.teacher_class_name import Teacher_Class_Name
 
         rows = Teacher_Class_Name.find_by_teacher_id(self.id)
 
@@ -159,6 +157,9 @@ class Teacher:
 
     def get_students(self):
         """ Return all the students that the teacher has. """
+        from models.student import Student
+        from models.student_class_name import Student_Class_Name
+
         classes = self.get_classes()
 
         rows = Student_Class_Name.find_by_class_name_id(classes)

@@ -4,16 +4,22 @@ from models.__init__ import CONN, CURSOR
 from models.teacher import Teacher
 from models.student import Student
 from models.class_name import Class_Name
+from models.teacher_class_name import Teacher_Class_Name
+from models.student_class_name import Student_Class_Name
 
 def seed_database():
     Teacher.drop_table()
     Student.drop_table()
     Class_Name.drop_table()
+    Teacher_Class_Name.drop_table()
+    Student_Class_Name.drop_table()
     Teacher.create_table()
     Student.create_table()
     Class_Name.create_table()
+    Teacher_Class_Name.create_table()
+    Student_Class_Name.create_table()
 
-    # Create seede data
+    # Create seed data
     Teacher.create("Dr. Smith")
     Teacher.create("Dr. Jones")
     Teacher.create("Dr. Brown")
@@ -36,6 +42,55 @@ def seed_database():
     Class_Name.create("Hip Hop 8")
     Class_Name.create("Adv. Clogging")
     Class_Name.create("Pointe 1")
+
+    Teacher_Class_Name.create(1, 1)
+    Teacher_Class_Name.create(1, 2)
+    Teacher_Class_Name.create(2, 2)
+    Teacher_Class_Name.create(3, 1)
+    Teacher_Class_Name.create(3, 3)
+    Teacher_Class_Name.create(4, 4)
+    Teacher_Class_Name.create(5, 5)
+    Teacher_Class_Name.create(5, 6)
+    Teacher_Class_Name.create(6, 6)
+
+    Student_Class_Name.create(1, 1)
+    Student_Class_Name.create(1, 2)
+    Student_Class_Name.create(1, 3)
+    Student_Class_Name.create(1, 4)
+    Student_Class_Name.create(2, 5)
+    Student_Class_Name.create(2, 6)
+    Student_Class_Name.create(2, 7)
+    Student_Class_Name.create(2, 8)
+    Student_Class_Name.create(3, 2)
+    Student_Class_Name.create(3, 4)
+    Student_Class_Name.create(3, 6)
+    Student_Class_Name.create(3, 8)
+    Student_Class_Name.create(4, 1)
+    Student_Class_Name.create(4, 3)
+    Student_Class_Name.create(4, 5)
+    Student_Class_Name.create(4, 7)
+    Student_Class_Name.create(5, 2)
+    Student_Class_Name.create(5, 3)
+    Student_Class_Name.create(5, 4)
+    Student_Class_Name.create(5, 5)
+    Student_Class_Name.create(6, 4)
+    Student_Class_Name.create(6, 5)
+    Student_Class_Name.create(6, 6)
+    Student_Class_Name.create(6, 7)
+    Student_Class_Name.create(7, 3)
+    Student_Class_Name.create(7, 4)
+    Student_Class_Name.create(7, 5)
+    Student_Class_Name.create(7, 6)
+    Student_Class_Name.create(7, 7)
+    Student_Class_Name.create(8, 1)
+    Student_Class_Name.create(8, 2)
+    Student_Class_Name.create(8, 3)
+    Student_Class_Name.create(8, 4)
+    Student_Class_Name.create(8, 5)
+    Student_Class_Name.create(8, 6)
+    Student_Class_Name.create(8, 7)
+    Student_Class_Name.create(8, 8)
+
     
     
 

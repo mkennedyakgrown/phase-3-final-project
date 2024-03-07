@@ -1,9 +1,5 @@
 # lib/models/student.py
 from models.__init__ import CONN, CURSOR
-from models.teacher import Teacher
-from models.class_name import Class_Name
-from models.student_class_name import Student_Class_Name
-from models.teacher_class_name import Teacher_Class_Name
 
 class Student:
 
@@ -152,18 +148,17 @@ class Student:
     
     def get_classes(self):
         """ Return all the classes that the student has. """
+        from models.class_name import Class_Name
+        from models.student_class_name import Student_Class_Name
 
-        sql = """
-            SELECT * 
-            FROM students_class_names
-            WHERE student_id = ?
-        """
-        rows = CURSOR.execute(sql, (self.id,)).fetchall()
+        rows = Student_Class_Name.find_by_student_id(self.id)
 
         return [Class_Name.instance_from_db(row[1]) for row in rows]
     
     def get_classes(self):
         """ Return all the classes that the teacher has. """
+        from models.class_name import Class_Name
+        from models.student_class_name import Student_Class_Name
 
         rows = Student_Class_Name.find_by_student_id(self.id)
 
@@ -171,6 +166,9 @@ class Student:
 
     def get_students(self):
         """ Return all the students that the teacher has. """
+        from models.teacher import Teacher
+        from models.teacher_class_name import Teacher_Class_Name
+        
         classes = self.get_classes()
 
         rows = Teacher_Class_Name.find_by_class_name_id(classes)
