@@ -55,6 +55,39 @@ if __name__ == "__main__":
     ########################### 
     #
     # If Admin:
+    #     * Teachers Information
+    #         * List Teachers
+    #             * Print list of teachers
+    #                 * Return to Teachers Information
+    #         * Search Teachers
+    #             * Get input for name
+    #                 * Query database for teacher(s)
+    #                 * Select a Teacher to view
+    #                     * Print Teacher Information (Name, Classes, Students)
+    #                         * Update Teacher
+    #                         * Delete Teacher
+    #     * Students Information
+    #         * List Students
+    #             * Print list of students
+    #                 * Return to Students Information
+    #         * Search Students
+    #             * Get input for name
+    #                 * Query database for student(s)
+    #                 * Select a Student to view
+    #                     * Print Student Information (Name, Classes, Teachers)
+    #                         * Update Student
+    #                         * Delete Student
+    #     * Classes Information
+    #         * List Classes
+    #             * Print list of classes
+    #                 * Return to Classes Information
+    #         * Search Classes
+    #             * Get input for name
+    #                 * Query database for class(s)
+    #                 * Select a Class to view
+    #                     * Print Class Information (Name, Teachers, Students)
+    #                         * Update Class
+    #                         * Delete Class
     #     * Add Teacher
     #         * Get input for name
     #             * Start loop for adding classes
