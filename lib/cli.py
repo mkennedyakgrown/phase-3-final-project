@@ -7,6 +7,10 @@ from helpers import (
     student_menu
 )
 
+from helpers_stack import (
+    nav_choices
+)
+
 
 def admin():
     admin_menu()
@@ -157,6 +161,9 @@ if __name__ == "__main__":
     ########################### 
     #
     # If Teacher:
+    #     * View Information
+    #         * View Classes
+    #         * View Students
     #     * Write Report
     #         * Select Class_Name
     #             (Print list of students in that class)
