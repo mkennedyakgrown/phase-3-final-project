@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import click
 from helpers import (
     exit_program,
     admin_menu,
@@ -8,43 +7,36 @@ from helpers import (
     student_menu
 )
 
-@click.group(help="Choose role: Admin, Teacher, Student, Exit")
-def cli():
-    pass
 
-@cli.command()
 def admin():
     admin_menu()
     main()
 
-@cli.command()
 def teacher():
-    click.echo("Teacher menu:")
+    print("Teacher menu:")
     main()
 
-@cli.command()
 def student():
-    click.echo("Student menu:")
+    print("Student menu:")
     main()
 
-@cli.command()
 def exit():
     exit_program()
     
 def main():
     menu = {
-        "admin": "admin",
-        "teacher": "teacher",
-        "student": "student",
-        "exit": "exit"
+        "admin": admin,
+        "teacher": teacher,
+        "student": student,
+        "exit": exit
     }
     while True:
-        click.echo("Choose role:")
+        print("Choose role:")
         for key in menu:
-            click.echo(f"    • {key.capitalize()}")
-        choice = click.prompt("", type=str).lower()
+            print(f"    • {key.capitalize()}")
+        choice = input("").lower()
         if choice in menu:
-            cli(args = [menu[choice]])
+            menu[choice]()
         else:
             print("Invalid choice. Please try again.")
 
