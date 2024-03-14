@@ -17,66 +17,74 @@ def show_menu(menu_items, menu_text):
         else:
             print("Invalid choice. Please try again.")
 
+### Admin actions ###
+            
+def search_teachers():
+    print("Search teachers")
+
+def search_students():
+    print("Search students")
+
+def search_classes():
+    print("Search classes")
+
+def add_teacher():
+    print("Add teacher")
+
+def add_student():
+    print("Add student")
+
+def add_class():
+    print("Add Class")
+
+def update_teacher():
+    print("Update teacher")
+
+def update_student():
+    print("Update student")
+
+def update_class():
+    print("Update Class")
+
+### Teacher actions ###
+    
+def write_report(teacher):
+    print(teacher)
+
+### Student actions ###
+
+def student_view_reports(student):
+    print(student)
+
+### Reuseable actions ###
+
 def list_all(cls, table):
-    print(cls, table)
-
-def search_teachers(cls, table):
-    print(cls, table)
-
-def search_students(cls, table):
-    print(cls, table)
-
-def search_classes(cls, table):
-    print(cls, table)
-
-def add_teacher(cls, table):
-    print(cls, table)
-
-def add_student(cls, table):
-    print(cls, table)
-
-def add_class(cls, table):
-    print(cls, table)
-
-def update_teacher(cls, table):
-    print(cls, table)
-
-def update_student(cls, table):
-    print(cls, table)
-
-def update_class(cls, table):
     print(cls, table)
 
 def delete(cls, table):
     print(cls, table)
 
-admin_menu = {
-    "teachers info": teachers_info_menu,
-    "students info": students_info_menu,
-    "classes info": classes_info_menu,
-    "add teacher": add_teacher,
-    "add student": add_student,
-    "add class": add_class,
-    "update teacher": update_teacher,
-    "update student": update_student,
-    "update class": update_class,
-    "delete teacher": [delete, Teacher, "teachers"],
-    "delete student": [delete, Student, "students"],
-    "delete class": [delete, Class_Name, "class_names"]
-}
-
-admin_menu_text = """Welcome, Admin! Select what to do:
-    • List (Teachers/Students/Classes)
-    • Add (Teacher/Student/Class)
-    • Update (Teacher/Student/Class)
-    • Delete (Teacher/Student/Class)
-    • Go Back
-    • Exit Program
-    """
+############# ADMIN MENUS #############
 
 admin_teachers_info_menu = {
     "list teachers": [list_all, Teacher, "teachers"],
     "search teachers": search_teachers
+}
+
+admin_students_info_menu = {
+    "list students": [list_all, Student, "students"],
+    "search students": search_students
+}
+
+admin_classes_info_menu = {
+    "list classes": [list_all, Class_Name, "class_names"],
+    "search classes": search_classes
+}
+    
+admin_info_menu = {
+    "teachers info": admin_teachers_info_menu,
+    "students info": admin_students_info_menu,
+    "classes info": admin_classes_info_menu
 }
 
 admin_add_menu = {
@@ -97,13 +105,47 @@ admin_delete_menu = {
     "classes": [delete, Class_Name, "class_names"]
 }
 
-teacher_menu = {
-    "Write Report": write_report_menu,
+admin_menu = {
+    "info": admin_info_menu,
+    "teachers info": admin_teachers_info_menu,
+    "students info": admin_students_info_menu,
+    "classes info": admin_classes_info_menu,
+    "add": admin_add_menu,
+    "add teacher": add_teacher,
+    "add student": add_student,
+    "add class": add_class,
+    "update": admin_update_menu,
+    "update teacher": update_teacher,
+    "update student": update_student,
+    "update class": update_class,
+    "delete": admin_delete_menu,
+    "delete teacher": [delete, Teacher, "teachers"],
+    "delete student": [delete, Student, "students"],
+    "delete class": [delete, Class_Name, "class_names"]
 }
 
-student_menu = {
-    "View Reports": view_report_menu,
+admin_menu_text = """Welcome, Admin! Select what to do:
+    • List (Teachers/Students/Classes)
+    • Add (Teacher/Student/Class)
+    • Update (Teacher/Student/Class)
+    • Delete (Teacher/Student/Class)
+    • Go Back
+    • Exit Program
+    """
+
+############# TEACHER MENUS #############
+
+teacher_menu = {
+    "Write Report": write_report,
 }
+
+############# STUDENT MENUS #############
+
+student_menu = {
+    "View Reports": student_view_reports,
+}
+
+############# MISC MENUS #############
 
 nav_choices = {
     "admin": admin_menu,
