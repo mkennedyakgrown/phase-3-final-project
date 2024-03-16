@@ -1,4 +1,5 @@
 # lib/helpers.py
+from models.__init__ import CONN, CURSOR
 
 from models.teacher import Teacher
 from models.student import Student
@@ -6,136 +7,188 @@ from models.student_class_name import Student_Class_Name
 from models.teacher_class_name import Teacher_Class_Name
 from models.class_name import Class_Name
 
+### Admin actions ###
+            
+def search_teachers():
+    print("Search teachers:")
+    name = input("Enter name:")
+    teacher = Teacher.find_by_name(name)
+    classes = teacher.get_classes()
+    students = teacher.get_students()
+    print(teacher)
+    print("Classes:")
+    for item in classes:
+        print(item)
+    print("Students:")
+    for item in students:
+        print(item)
 
-def admin_menu():
-    print("""
-Welcome, Admin!
-Choose an action:
-    • Add (Teacher/Student/Class)
-    • Update (Teacher/Student/Class)
-    • Delete (Teacher/Student/Class)
-    • Go Back
-    • Exit Program
-    """)
+def search_students():
+    print("Search students")
 
-    choices = {
-        "add teacher": [add, Teacher, "teachers"],
-        "add student": [add, Student, "students"],
-        "add class": [add, Class_Name, "class_names"],
-        "update teacher": [update, Teacher, "teachers"],
-        "update student": [update, Student, "students"],
-        "update class": [update, Class_Name, "class_names"],
-        "delete teacher": [delete, Teacher, "teachers"],
-        "delete student": [delete, Student, "students"],
-        "delete class": [delete, Class_Name, "class_names"]
-    }
-    choice = input("").lower()
-    if choice in choices:
-        choices[choice][0](choices[choice][1], choices[choice][2])
-    elif choice in nav_choices:
-        nav_choices[choice]()
-    elif choice in action_menus:
-        action_menus[choice]()
-    else:
-        print("Invalid choice. Please try again.")
+def search_classes():
+    print("Search classes")
 
+def add_teacher():
+    print("Add teacher")
 
-def add_menu():
-    print("""Choose what to add:
-    • Teacher
-    • Student
-    • Class
-    • Go Back
-    • Exit Program
-    """)
+def add_student():
+    print("Add student")
 
-    choices = {
-        "teacher": [Teacher, "teachers"],
-        "student": [Student, "students"],
-        "class": [Class_Name, "class_names"]
-    }
-    choice = input("").lower()
-    if choice in choices:
-        add(choices[choice][0], choices[choice][1])
-    elif choice in nav_choices:
-        nav_choices[choice]()
-    else:
-        print("Invalid choice. Please try again.")
+def add_class():
+    print("Add Class")
 
-def add(cls, table):
-    print(cls, table)
+def update_teacher():
+    print("Update teacher")
 
-def update_menu():
-    print("""Choose what to update:
-    • Teacher
-    • Student
-    • Class
-    • Go Back
-    • Exit Program
-    """)
+def update_student():
+    print("Update student")
 
-    choices = {
-        "teacher": [Teacher, "teachers"],
-        "student": [Student, "students"],
-        "class": [Class_Name, "class_names"]
-    }
-    choice = input("").lower()
-    if choice in choices:
-        update(choices[choice][0], choices[choice][1])
-    elif choice in nav_choices:
-        nav_choices[choice]()
-    else:
-        print("Invalid choice. Please try again.")
+def update_class():
+    print("Update Class")
 
-def update(cls, table):
-    print(cls, table)
+### Teacher actions ###
+    
+def write_report(teacher):
+    print(teacher)
 
-def delete_menu():
-    print("""Choose what to delete:
-    • Teacher
-    • Student
-    • Class
-    • Go Back
-    • Exit Program
-    """)
+### Student actions ###
 
-    choices = {
-        "teacher": [Teacher, "teachers"],
-        "student": [Student, "students"],
-        "class": [Class_Name, "class_names"]
-    }
-    choice = input("").lower()
-    if choice in choices:
-        delete(choices[choice][0], choices[choice][1])
-    elif choice in nav_choices:
-        nav_choices[choice]()
-    else:
-        print("Invalid choice. Please try again.")
+def student_view_reports(student):
+    print(student)
+
+### Reuseable actions ###
+
+def list_all(cls, table):
+    print(f"******** List of all {table.capitalize()} ********")
+    obj_list = cls.get_all()
+    for item in obj_list:
+        print(item)
 
 def delete(cls, table):
     print(cls, table)
 
-def teacher_menu():
-    print("Teacher menu:")
+############# ADMIN MENUS #############
 
-
-def student_menu():
-    print("Student menu:")
-        
-def go_back():
-    pass
-
-def exit_program():
-    print("Goodbye!")
-    exit()
-    
-nav_choices = {
-    "go back" : go_back,
-    "exit" : exit_program
+admin_teachers_info_menu = {
+    "menu_text": """What info do you want to see?
+    • List all teachers
+    • Search teachers""",
+    "list all teachers": [list_all, Teacher, "teachers"],
+    "list teachers": [list_all, Teacher, "teachers"],
+    "list": [list_all, Teacher, "teachers"],
+    "search teachers": search_teachers,
+    "search": search_teachers
 }
 
-action_menus = {
-    "add": add_menu,
-    "update": update_menu,
-    "delete": delete_menu
+admin_students_info_menu = {
+    "menu_text": """What info do you want to see?
+    • List all students
+    • Search students""",
+    "list all students": [list_all, Student, "students"],
+    "list students": [list_all, Student, "students"],
+    "list": [list_all, Student, "students"],
+    "search students": search_students,
+    "search": search_students
+}
+
+admin_classes_info_menu = {
+    "menu_text": """What info do you want to see?
+    • List all classes
+    • Search classes""",
+    "list all classes": [list_all, Class_Name, "class_names"],
+    "list classes": [list_all, Class_Name, "class_names"],
+    "list": [list_all, Class_Name, "class_names"],
+    "search classes": search_classes,
+    "search": search_classes
+}
+    
+admin_info_menu = {
+    "menu_text": """Get info on what:
+    • Teachers
+    • Students
+    • Classes""",
+    "teachers": admin_teachers_info_menu,
+    "students": admin_students_info_menu,
+    "classes": admin_classes_info_menu
+}
+
+admin_add_menu = {
+    "menu_text": """Choose what to add:
+    • Teacher
+    • Student
+    • Class""",
+    "teachers": add_teacher,
+    "students": add_student,
+    "classes": add_class
+}
+
+admin_update_menu = {
+    "menu_text": """Choose what to update:
+    • Teacher
+    • Student
+    • Class""",
+    "teachers": update_teacher,
+    "students": update_student,
+    "classes": update_class
+}
+
+admin_delete_menu = {
+    "menu_text": """Choose what to delete:
+    • Teacher
+    • Student
+    • Class""",
+    "teacher": [delete, Teacher, "teachers"],
+    "student": [delete, Student, "students"],
+    "class": [delete, Class_Name, "class_names"]
+}
+
+admin_menu = {
+    "menu_text": """Welcome, Admin! Select what to do:
+    • Info (Teachers/Students/Classes)
+    • Add (Teacher/Student/Class)
+    • Update (Teacher/Student/Class)
+    • Delete (Teacher/Student/Class)""",
+    "info": admin_info_menu,
+    "teachers info": admin_teachers_info_menu,
+    "students info": admin_students_info_menu,
+    "classes info": admin_classes_info_menu,
+    "add": admin_add_menu,
+    "add teacher": add_teacher,
+    "add student": add_student,
+    "add class": add_class,
+    "update": admin_update_menu,
+    "update teacher": update_teacher,
+    "update student": update_student,
+    "update class": update_class,
+    "delete": admin_delete_menu,
+    "delete teacher": [delete, Teacher, "teachers"],
+    "delete student": [delete, Student, "students"],
+    "delete class": [delete, Class_Name, "class_names"]
+}
+
+############# TEACHER MENUS #############
+
+teacher_menu = {
+    "Write Report": write_report,
+}
+
+############# STUDENT MENUS #############
+
+student_menu = {
+    "View Reports": student_view_reports,
+}
+
+############# MAIN MENU #############
+
+main_menu_text = """Choose your role:
+    • Admin
+    • Teacher
+    • Student"""
+
+main_menu = {
+    "menu_text": main_menu_text,
+    "admin": admin_menu,
+    "teacher": teacher_menu,
+    "student": student_menu
 }
