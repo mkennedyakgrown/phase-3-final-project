@@ -8,9 +8,12 @@ from helpers import (
 )
 
 from helpers_stack import (
-    nav_choices
+    show_menu,
+    main_menu,
+    main_menu_text
 )
 
+from seed import seed_database
 
 def admin():
     admin_menu()
@@ -46,7 +49,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    show_menu(main_menu)
 
 # Program flow:
     # 

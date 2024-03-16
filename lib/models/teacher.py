@@ -140,10 +140,9 @@ class Teacher:
         sql = """
             SELECT *
             FROM teachers
-            WHERE name = ?
+            WHERE name is ?
         """
-        row = CURSOR.execute(sql, (name,)).fetchall()
-
+        row = CURSOR.execute(sql, (name,)).fetchone()
         return cls.instance_from_db(row) if row else None
     
     def get_classes(self):

@@ -165,3 +165,16 @@ class Teacher_Class_Name:
         """
         rows = CURSOR.execute(sql, (teacher_id,)).fetchall()
         return [cls.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def find_by_name(cls, name):
+        """ Return the teacher with the given name. """
+
+        sql = """
+            SELECT * 
+            FROM teachers
+            WHERE name is ?
+        """
+        row = CURSOR.execute(sql, (name,)).fetchone()
+        print("row", row)
+        return cls.instance_from_db(row) if row else None
