@@ -73,12 +73,18 @@ def add_teacher():
     name = ""
     while True:
         name = input("Enter new teacher name:")
-        if name:
+        if Teacher.find_by_name(name.title()):
+            print(f"Teacher {name} already exists")
+            name = ""
+        elif name == "exit":
+            print("Exiting...")
+            exit()
+        elif name:
             break
         else:
             print("Name cannot be blank")
     classes_list = Class_Name.get_all()
-    classes = []
+    classes = set([])
     while True:
         print("********")
         print("Classes Available:")
@@ -90,11 +96,11 @@ def add_teacher():
             if item:
                 print(item.name)
         print("********")
-        class_name = input("Enter class name (or blank to stop):")
+        class_name = input("Enter class name to assign (or blank to stop):")
         if class_name:
             new_class = Class_Name.find_by_name(class_name.title())
             if new_class:
-                classes.append(new_class)
+                classes.add(new_class)
             else:
                 print(f"Class {class_name} not found")
         else:
@@ -116,28 +122,33 @@ def add_student():
     name = ""
     while True:
         name = input("Enter new student name:")
-        if name:
+        if Student.find_by_name(name.title()):
+            print(f"Student {name} already exists")
+        elif name == "exit":
+            print("Exiting...")
+            exit()
+        elif name:
             break
         else:
             print("Name cannot be blank")
     classes_list = Class_Name.get_all()
-    classes = []
+    classes = set([])
     while True:
         print("********")
         print("Classes Available:")
         for item in classes_list:
             print(item.name)
         print("********")
-        print("Assigned Classes:")
+        print("Enrolled Classes:")
         for item in classes:
             if item:
                 print(item.name)
         print("********")
-        class_name = input("Enter class name (or blank to stop):")
+        class_name = input("Enter class name to enroll (or blank to stop):")
         if class_name:
             new_class = Class_Name.find_by_name(class_name.title())
             if new_class:
-                classes.append(new_class)
+                classes.add(new_class)
             else:
                 print(f"Class {class_name} not found")
         else:
@@ -155,6 +166,81 @@ def add_student():
 
 def add_class():
     print("Add Class:")
+    print("********")
+    name = ""
+    while True:
+        name = input("Enter new class name:")
+        if Class_Name.find_by_name(name.title()):
+            print(f"Class {name} already exists")
+            name = ""
+        elif name == "exit":
+            print("Exiting...")
+            exit()
+        elif name:
+            break
+        else:
+            print("Name cannot be blank")
+    teachers_list = Teacher.get_all()
+    teachers = set([])
+    while True:
+        print("********")
+        print("Teachers Available:")
+        for item in teachers_list:
+            print(item.name)
+        print("********")
+        print("Assigned Teachers:")
+        for item in teachers:
+            if item:
+                print(item.name)
+        print("********")
+        teacher_name = input("Enter teacher name to assign (or blank to stop):")
+        if teacher_name:
+            new_teacher = Teacher.find_by_name(teacher_name.title())
+            if new_teacher:
+                teachers.add(new_teacher)
+            elif name == "exit":
+                print("Exiting...")
+                exit()
+            else:
+                print(f"Teacher {teacher_name} not found")
+        else:
+            break
+    students_list = Student.get_all()
+    students = set([])
+    while True:
+        print("********")
+        print("Students Available:")
+        for item in students_list:
+            print(item.name)
+        print("********")
+        print("Enrolled Students:")
+        for item in students:
+            if item:
+                print(item.name)
+        print("********")
+        student_name = input("Enter student name to enroll (or blank to stop):")
+        if student_name:
+            new_student = Student.find_by_name(student_name.title())
+            if new_student:
+                students.add(new_student)
+            else:
+                print(f"Student {student_name} not found")
+        else:
+            break
+    class_ = Class_Name(name.title())
+    class_.save()
+    for item in teachers:
+        teacher_class_name = Teacher_Class_Name(class_.id, item.id)
+        teacher_class_name.save()
+    for item in students:
+        student_class_name = Student_Class_Name(class_.id, item.id)
+        student_class_name.save()
+    print("********")
+    print("New Class Added:")
+    print(class_)
+    print(class_.get_teachers())
+    print(class_.get_students())
+    print("********")
 
 def update_teacher():
     print("Update teacher:")

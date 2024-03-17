@@ -13,7 +13,7 @@ def debug():
     from models.class_name import Class_Name
     from models.student import Student
 
-    sql = """INSERT INTO teacher_class_name
+    sql = """DROP TABLE IF EXISTS student_class_name
      """
 
     CURSOR.execute(sql)
