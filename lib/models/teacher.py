@@ -129,7 +129,7 @@ class Teacher:
             FROM teachers 
             WHERE id = ?
         """
-        row = CURSOR.execute(sql, (id,)).fetchall()
+        row = CURSOR.execute(sql, (id,)).fetchone()
 
         return cls.instance_from_db(row) if row else None
     
@@ -150,9 +150,10 @@ class Teacher:
         from models.class_name import Class_Name
         from models.teacher_class_name import Teacher_Class_Name
 
-        rows = Teacher_Class_Name.find_by_teacher_id(self.id)
+        teacher_class_rows = Teacher_Class_Name.find_by_teacher_id(self.id)
+        rows = [Class_Name.find_by_id(row.class_name_id) for row in teacher_class_rows]
 
-        return [Class_Name.instance_from_db(row[1]) for row in rows]
+        return [Class_Name.instance_from_db([row.id, row.name]) for row in rows]
 
     def get_students(self):
         """ Return all the students that the teacher has. """
@@ -161,6 +162,8 @@ class Teacher:
 
         classes = self.get_classes()
 
-        rows = Student_Class_Name.find_by_class_name_id(classes)
-
-        return [Student.instance_from_db(row[2]) for row in rows]
+        student_class_rows = Student_Class_Name.find_by_class_name_id(classes)
+        print(type(student_class_rows))
+        rows = [Student.find_by_id(row.id) for row in student_class_rows]
+        print(type(rows))
+        return [Student.instance_from_db([row.id, row.name]) for row in rows]

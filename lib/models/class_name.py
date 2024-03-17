@@ -133,7 +133,7 @@ class Class_Name:
             FROM class_names 
             WHERE id = ?
         """
-        row = CURSOR.execute(sql, (id,)).fetchall()
+        row = CURSOR.execute(sql, (id,)).fetchone()
 
         return cls.instance_from_db(row) if row else None
     
@@ -146,7 +146,7 @@ class Class_Name:
             FROM class_names
             WHERE name = ?
         """
-        row = CURSOR.execute(sql, (name,)).fetchall()
+        row = CURSOR.execute(sql, (name,)).fetchone()
 
         return cls.instance_from_db(row) if row else None
     

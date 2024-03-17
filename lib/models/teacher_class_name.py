@@ -23,7 +23,7 @@ class Teacher_Class_Name:
     @class_name_id.setter
     def class_name_id(self, class_name_id):
         from models.class_name import Class_Name
-        if isinstance(class_name_id, int) and Class_Name.all[class_name_id]:
+        if isinstance(class_name_id, int) and Class_Name.find_by_id(class_name_id):
             self._class_name_id = class_name_id
         else:
             raise ValueError(
@@ -37,7 +37,7 @@ class Teacher_Class_Name:
     @teacher_id.setter
     def teacher_id(self, teacher_id):
         from models.teacher import Teacher
-        if isinstance(teacher_id, int) and Teacher.all[teacher_id]:
+        if isinstance(teacher_id, int):
             self._teacher_id = teacher_id
         else:
             raise ValueError(
@@ -105,7 +105,7 @@ class Teacher_Class_Name:
     @classmethod
     def instance_from_db(cls, row):
         """ Return a teacher_class_name instance from the database. """
-
+        
         teacher_class_name = cls.all.get(row[0])
         if teacher_class_name:
             teacher_class_name.class_name_id = row[1]
@@ -164,6 +164,7 @@ class Teacher_Class_Name:
             WHERE teacher_id = ?
         """
         rows = CURSOR.execute(sql, (teacher_id,)).fetchall()
+        
         return [cls.instance_from_db(row) for row in rows]
     
     @classmethod
@@ -176,5 +177,5 @@ class Teacher_Class_Name:
             WHERE name is ?
         """
         row = CURSOR.execute(sql, (name,)).fetchone()
-        print("row", row)
+        
         return cls.instance_from_db(row) if row else None
