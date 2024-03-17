@@ -70,7 +70,13 @@ def search_classes():
 def add_teacher():
     print("Add teacher:")
     print("********")
-    name = input("Enter new teacher name:")
+    name = ""
+    while True:
+        name = input("Enter new teacher name:")
+        if name:
+            break
+        else:
+            print("Name cannot be blank")
     classes_list = Class_Name.get_all()
     classes = []
     while True:
@@ -106,6 +112,46 @@ def add_teacher():
 
 def add_student():
     print("Add student:")
+    print("********")
+    name = ""
+    while True:
+        name = input("Enter new student name:")
+        if name:
+            break
+        else:
+            print("Name cannot be blank")
+    classes_list = Class_Name.get_all()
+    classes = []
+    while True:
+        print("********")
+        print("Classes Available:")
+        for item in classes_list:
+            print(item.name)
+        print("********")
+        print("Assigned Classes:")
+        for item in classes:
+            if item:
+                print(item.name)
+        print("********")
+        class_name = input("Enter class name (or blank to stop):")
+        if class_name:
+            new_class = Class_Name.find_by_name(class_name.title())
+            if new_class:
+                classes.append(new_class)
+            else:
+                print(f"Class {class_name} not found")
+        else:
+            break
+    student = Student(name.title())
+    student.save()
+    for item in classes:
+        student_class_name = Student_Class_Name(item.id, student.id)
+        student_class_name.save()
+    print("********")
+    print("New Student Added:")
+    print(student)
+    print(student.get_classes())
+    print("********")
 
 def add_class():
     print("Add Class:")
