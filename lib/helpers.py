@@ -244,9 +244,126 @@ def add_class():
 
 def update_teacher():
     print("Update teacher:")
+    print("********")
+    name = ""
+    teachers = Teacher.get_all()
+    while True:
+        print("********")
+        print("Teachers Available:")
+        for item in teachers:
+            print(item.name)
+        print("********")
+        name = input("Select Teacher to update:")
+        if Teacher.find_by_name(name.title()):
+            break
+        elif name == "exit":
+            print("Exiting...")
+            exit()
+        else:
+            print(f"Teacher {name} not found")
+            name = ""
+    teacher = Teacher.find_by_name(name.title())
+    print("********")
+    print(f"Updating Teacher {teacher.name}...")
+    new_name = input("Enter new name (or blank to keep current):")
+    if new_name:
+        teacher.name = new_name.title()
+        teacher.save()
+    print("********")
+    classes = set(teacher.get_classes())
+    while True:
+        print(f"Assign Classes (or blank to keep current):")
+        print("Available Classes:")
+        classes_list = Class_Name.get_all()
+        for item in classes_list:
+            print(item.name)
+        print("********")
+        print("Assigned Classes:")
+        for item in classes:
+            print(item.name)
+        class_name = input("Enter class name to assign (or blank to stop):")
+        if class_name == "":
+            break
+        else:
+            new_class = Class_Name.find_by_name(class_name.title())
+            if name == "exit":
+                print("Exiting...")
+                exit()
+            elif new_class:
+                classes.add(new_class)
+            else:
+                print(f"Class {class_name} not found")
+    for item in classes:
+        if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, teacher.id) is None:
+            teacher_class_name = Teacher_Class_Name(item.id, teacher.id)
+            teacher_class_name.save()
+    print("********")
+    print(f"Teacher {teacher.name} Updated:")
+    print(teacher)
+    print(teacher.get_classes())
+    print(teacher.get_students())
+    print("********")
 
 def update_student():
     print("Update student:")
+    print("********")
+    name = ""
+    students = Student.get_all()
+    while True:
+        print("********")
+        print("Students Available:")
+        for item in students:
+            print(item.name)
+        print("********")
+        name = input("Select Student to update:")
+        if Student.find_by_name(name.title()):
+            break
+        elif name == "exit":
+            print("Exiting...")
+            exit()
+        else:
+            print(f"Student {name} not found")
+            name = ""
+    student = Student.find_by_name(name.title())
+    print("********")
+    print(f"Updating Student {student.name}...")
+    new_name = input("Enter new name (or blank to keep current):")
+    if new_name:
+        student.name = new_name.title()
+        student.save()
+    print("********")
+    classes = set(student.get_classes())
+    while True:
+        print(f"Assign Classes (or blank to keep current):")
+        print("Available Classes:")
+        classes_list = Class_Name.get_all()
+        for item in classes_list:
+            print(item.name)
+        print("********")
+        print("Assigned Classes:")
+        for item in classes:
+            print(item.name)
+        class_name = input("Enter class name to assign (or blank to stop):")
+        if class_name == "":
+            break
+        else:
+            new_class = Class_Name.find_by_name(class_name.title())
+            if name == "exit":
+                print("Exiting...")
+                exit()
+            elif new_class:
+                classes.add(new_class)
+            else:
+                print(f"Class {class_name} not found")
+    for item in classes:
+        if Student_Class_Name.find_by_class_name_id_and_student_id(item.id, student.id) is None:
+            student_class_name = Student_Class_Name(item.id, student.id)
+            student_class_name.save()
+    print("********")
+    print(f"Student {student.name} Updated:")
+    print(student)
+    print(student.get_classes())
+    print("********")
 
 def update_class():
     print("Update Class:")
@@ -333,9 +450,9 @@ admin_update_menu = {
     • Teacher
     • Student
     • Class""",
-    "teachers": update_teacher,
-    "students": update_student,
-    "classes": update_class
+    "teacher": update_teacher,
+    "student": update_student,
+    "class": update_class
 }
 
 admin_delete_menu = {

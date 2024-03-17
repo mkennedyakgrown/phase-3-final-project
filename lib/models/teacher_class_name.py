@@ -179,3 +179,16 @@ class Teacher_Class_Name:
         row = CURSOR.execute(sql, (name,)).fetchone()
         
         return cls.instance_from_db(row) if row else None
+    
+    @classmethod
+    def find_by_class_name_id_and_teacher_id(cls, class_name_id, teacher_id):
+        """ Return the teacher_class_name with the given class_name_id and teacher_id. """
+
+        sql = """
+            SELECT * 
+            FROM teacher_class_names
+            WHERE class_name_id = ? AND teacher_id = ?
+        """
+        row = CURSOR.execute(sql, (class_name_id, teacher_id)).fetchone()
+        
+        return cls.instance_from_db(row) if row else None

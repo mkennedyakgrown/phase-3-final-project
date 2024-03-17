@@ -165,3 +165,15 @@ class Student_Class_Name:
         """
         rows = CURSOR.execute(sql, (student_id,)).fetchall()
         return [cls.instance_from_db(row) for row in rows]
+    
+    @classmethod
+    def find_by_class_name_id_and_student_id(cls, class_name_id, student_id):
+        """ Return the student_class_name with the given class_name_id and student_id. """
+
+        sql = """
+            SELECT * 
+            FROM student_class_names
+            WHERE class_name_id = ? AND student_id = ?
+        """
+        row = CURSOR.execute(sql, (class_name_id, student_id)).fetchone()
+        return cls.instance_from_db(row) if row else None

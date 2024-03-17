@@ -12,6 +12,8 @@ def debug():
     from models.teacher import Teacher
     from models.class_name import Class_Name
     from models.student import Student
+    from models.student_class_name import Student_Class_Name
+    from models.teacher_class_name import Teacher_Class_Name
 
     sql = """DROP TABLE IF EXISTS student_class_name
      """
@@ -19,15 +21,21 @@ def debug():
     CURSOR.execute(sql)
     CONN.commit()
 
-    name = "Jameson Filliam"
+    name = "nick pearson"
     print(name.title())
-    obj = Teacher.find_by_name(name.title())
+    obj = Student.find_by_name(name.title())
     print(obj)
     # teachers = Class_Name.get_teachers(obj)
     # print(teachers)
     # students = Teacher.get_students(obj)
-    # print(students)
-    classes = Teacher.get_classes(obj)
-    print(classes)
+    # for student in students:
+    #     print(student)
+    classes = Student.get_classes(obj)
+    for cls in classes:
+        print(cls)
+
+    for cls in classes:
+        print(cls.name)
+        print(Student_Class_Name.find_by_class_name_id_and_student_id(cls.id, obj.id))
 
 debug()

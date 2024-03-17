@@ -162,8 +162,15 @@ class Teacher:
 
         classes = self.get_classes()
 
-        student_class_rows = [Student_Class_Name.find_by_class_name_id(class_.id) for class_ in classes][0]
+        student_class_rows = [Student_Class_Name.find_by_class_name_id(class_.id) for class_ in classes]
         
-        rows = [Student.find_by_id(row.student_id) for row in student_class_rows]
-        
-        return [Student.instance_from_db([row.id, row.name]) for row in rows]
+        rows = []
+        for student_class_row in student_class_rows:
+            for row in student_class_row:
+                rows.append(Student.find_by_id(row.student_id))
+
+        students = set([])
+        for row in rows:
+            students.add(Student.instance_from_db([row.id, row.name]))
+            
+        return students
