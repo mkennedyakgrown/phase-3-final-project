@@ -48,7 +48,7 @@ class Student_Class_Name:
     def create_table(cls):
         """ Create a new table to persist the attributes of Student_Class_Name instances in the database. """
         sql = """
-            CREATE TABLE IF NOT EXISTS student_class_name (
+            CREATE TABLE IF NOT EXISTS student_class_names (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             class_name_id INTEGER NOT NULL,
             student_id INTEGER NOT NULL
@@ -62,7 +62,7 @@ class Student_Class_Name:
     def drop_table(cls):
         """ Drop the table used to persist the attributes of Student_Class_Name instances in the database. """
         sql = """
-            DROP TABLE IF EXISTS student_class_name
+            DROP TABLE IF EXISTS student_class_names
         """
         CURSOR.execute(sql)
         CONN.commit()
@@ -71,7 +71,7 @@ class Student_Class_Name:
         """ Save the student_class_name to the database. """
 
         sql = """
-            INSERT INTO student_class_name (class_name_id, student_id)
+            INSERT INTO student_class_names (class_name_id, student_id)
             VALUES (?, ?)
         """
         CURSOR.execute(sql, (self.class_name_id, self.student_id))
@@ -89,10 +89,10 @@ class Student_Class_Name:
         return student_class_name
     
     def delete(self):
-        """ Delete the student_class_name from the database. """
+        """ Delete the student_class_names from the database. """
 
         sql = """
-            DELETE FROM student_class_name
+            DELETE FROM student_class_names
             WHERE id = ?
         """
         CURSOR.execute(sql, (self.id,))
@@ -122,7 +122,7 @@ class Student_Class_Name:
 
         sql = """
             SELECT *
-            FROM student_class_name
+            FROM student_class_names
         """
         
         rows = CURSOR.execute(sql).fetchall()
@@ -136,7 +136,7 @@ class Student_Class_Name:
 
         sql = """
             SELECT * 
-            FROM student_class_name 
+            FROM student_class_names
             WHERE id = ?
         """
         row = CURSOR.execute(sql, (id,)).fetchone()
@@ -148,7 +148,7 @@ class Student_Class_Name:
 
         sql = """
             SELECT * 
-            FROM student_class_name 
+            FROM student_class_names
             WHERE class_name_id = ?
         """
         rows = CURSOR.execute(sql, (class_name_id,)).fetchall()
@@ -160,7 +160,7 @@ class Student_Class_Name:
 
         sql = """
             SELECT * 
-            FROM student_class_name 
+            FROM student_class_names
             WHERE student_id = ?
         """
         rows = CURSOR.execute(sql, (student_id,)).fetchall()

@@ -13,16 +13,21 @@ def debug():
     from models.class_name import Class_Name
     from models.student import Student
 
-    print(Class_Name.find_by_id(3))
-    print(Student.find_by_id(2))
+    sql = """INSERT INTO teacher_class_name
+     """
 
-    name = "Ballet 4"
+    CURSOR.execute(sql)
+    CONN.commit()
+
+    name = "Jameson Filliam"
     print(name.title())
-    obj = Class_Name.find_by_name(name.title())
+    obj = Teacher.find_by_name(name.title())
     print(obj)
-    teachers = Class_Name.get_teachers(obj)
-    print(teachers)
-    students = Class_Name.get_students(obj)
-    print(students)
+    # teachers = Class_Name.get_teachers(obj)
+    # print(teachers)
+    # students = Teacher.get_students(obj)
+    # print(students)
+    classes = Teacher.get_classes(obj)
+    print(classes)
 
 debug()

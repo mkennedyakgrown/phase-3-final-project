@@ -68,22 +68,56 @@ def search_classes():
         print("********")
 
 def add_teacher():
-    print("Add teacher")
+    print("Add teacher:")
+    print("********")
+    name = input("Enter new teacher name:")
+    classes_list = Class_Name.get_all()
+    classes = []
+    while True:
+        print("********")
+        print("Classes Available:")
+        for item in classes_list:
+            print(item.name)
+        print("********")
+        print("Assigned Classes:")
+        for item in classes:
+            if item:
+                print(item.name)
+        print("********")
+        class_name = input("Enter class name (or blank to stop):")
+        if class_name:
+            new_class = Class_Name.find_by_name(class_name.title())
+            if new_class:
+                classes.append(new_class)
+            else:
+                print(f"Class {class_name} not found")
+        else:
+            break
+    teacher = Teacher(name.title())
+    teacher.save()
+    for item in classes:
+        teacher_class_name = Teacher_Class_Name(item.id, teacher.id)
+        teacher_class_name.save()
+    print("********")
+    print("New Teacher Added:")
+    print(teacher)
+    print(teacher.get_classes())
+    print("********")
 
 def add_student():
-    print("Add student")
+    print("Add student:")
 
 def add_class():
-    print("Add Class")
+    print("Add Class:")
 
 def update_teacher():
-    print("Update teacher")
+    print("Update teacher:")
 
 def update_student():
-    print("Update student")
+    print("Update student:")
 
 def update_class():
-    print("Update Class")
+    print("Update Class:")
 
 ### Teacher actions ###
     
@@ -157,9 +191,9 @@ admin_add_menu = {
     • Teacher
     • Student
     • Class""",
-    "teachers": add_teacher,
-    "students": add_student,
-    "classes": add_class
+    "teacher": add_teacher,
+    "student": add_student,
+    "class": add_class
 }
 
 admin_update_menu = {
