@@ -20,12 +20,12 @@ def seed_database():
     Student_Class_Name.create_table()
 
     # Create seed data
-    Teacher.create("Dr. Smith")
-    Teacher.create("Dr. Jones")
-    Teacher.create("Dr. Brown")
-    Teacher.create("Dr. Miller")
-    Teacher.create("Dr. Wilson")
-    Teacher.create("Dr. Davis")
+    Teacher.create("Jerry Smith")
+    Teacher.create("Felicia Jones")
+    Teacher.create("Todd Brown")
+    Teacher.create("Aubrey Miller")
+    Teacher.create("Trevor Wilson")
+    Teacher.create("Miles Davis")
     Student.create("John Smith")
     Student.create("Jane Smith")
     Student.create("John Doe")

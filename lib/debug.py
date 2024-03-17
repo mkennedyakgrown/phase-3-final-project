@@ -16,8 +16,9 @@ def debug():
     print(Class_Name.find_by_id(3))
     print(Student.find_by_id(2))
 
-    teacher_name = "Dr. Brown"
-    teacher = Teacher.find_by_name(teacher_name)
+    teacher_name = "todd brown"
+    print(teacher_name.title())
+    teacher = Teacher.find_by_name(teacher_name.title())
     print(teacher)
     teacher_classes = Teacher.get_classes(teacher)
     print(teacher_classes)

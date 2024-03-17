@@ -12,19 +12,32 @@ from models.class_name import Class_Name
 def search_teachers():
     print("Search teachers:")
     name = input("Enter name:")
-    teacher = Teacher.find_by_name(name)
-    classes = teacher.get_classes()
-    students = teacher.get_students()
-    print(teacher)
-    print("Classes:")
-    for item in classes:
-        print(item)
-    print("Students:")
-    for item in students:
-        print(item)
+    teacher = Teacher.find_by_name(name.title())
+    if teacher:
+        classes = teacher.get_classes()
+        students = teacher.get_students()
+        print(teacher)
+        print("Classes:")
+        for item in classes:
+            print(item)
+        print("Students:")
+        for item in students:
+            print(item)
+    else:
+        print(f"Teacher {name} not found")
 
 def search_students():
-    print("Search students")
+    print("Search students:")
+    name = input("Enter name:").capitalize()
+    student = Student.find_by_name(name.title())
+    if student:
+        classes = student.get_classes()
+        print(student)
+        print("Classes:")
+        for item in classes:
+            print(item)
+    else:
+        print(f"Student {name} not found")
 
 def search_classes():
     print("Search classes")
