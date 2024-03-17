@@ -16,6 +16,7 @@ def search_teachers():
     if teacher:
         classes = teacher.get_classes()
         students = teacher.get_students()
+        print("********")
         print(teacher)
         print("Classes:")
         for item in classes:
@@ -23,8 +24,11 @@ def search_teachers():
         print("Students:")
         for item in students:
             print(item)
+        print("********")
     else:
+        print("********")
         print(f"Teacher {name} not found")
+        print("********")
 
 def search_students():
     print("Search students:")
@@ -32,15 +36,36 @@ def search_students():
     student = Student.find_by_name(name.title())
     if student:
         classes = student.get_classes()
+        print("********")
         print(student)
         print("Classes:")
         for item in classes:
             print(item)
+        print("********")
     else:
+        print("********")
         print(f"Student {name} not found")
+        print("********")
 
 def search_classes():
     print("Search classes")
+    name = input("Enter name:").capitalize()
+    class_name = Class_Name.find_by_name(name.title())
+    if class_name:
+        teachers = class_name.get_teachers()
+        print("********")
+        print("Teacher(s):")
+        for item in teachers:
+            print(item)
+        students = class_name.get_students()
+        print("Student(s):")
+        for item in students:
+            print(item)
+        print("********")
+    else:
+        print("********")
+        print(f"Class {name} not found")
+        print("********")
 
 def add_teacher():
     print("Add teacher")
@@ -77,6 +102,7 @@ def list_all(cls, table):
     obj_list = cls.get_all()
     for item in obj_list:
         print(item)
+    print("****************************************")
 
 def delete(cls, table):
     print(cls, table)

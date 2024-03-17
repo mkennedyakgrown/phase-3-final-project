@@ -153,13 +153,15 @@ class Class_Name:
     def get_teachers(self):
         """ Return all the teachers for the class. """
 
-        teacher_ids = Teacher_Class_Name.find_by_class_name_id(self.id)
+        teacher_class_name_rows = Teacher_Class_Name.find_by_class_name_id(self.id)
+        teacher_rows = [Teacher.find_by_id(row.teacher_id) for row in teacher_class_name_rows]
 
-        return [Teacher.instance_from_db(row[2]) for row in teacher_ids]
+        return [Teacher.instance_from_db([row.id, row.name]) for row in teacher_rows]
     
     def get_students(self):
         """ Return all the students for the class. """
 
-        student_ids = Student_Class_Name.find_by_class_name_id(self.id)
+        student_class_name_rows = Student_Class_Name.find_by_class_name_id(self.id)
+        student_rows = [Student.find_by_id(row.student_id) for row in student_class_name_rows]
 
-        return [Student.instance_from_db(row[2]) for row in student_ids]
+        return [Student.instance_from_db([row.id, row.name]) for row in student_rows]
