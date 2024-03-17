@@ -151,9 +151,10 @@ class Student:
         from models.class_name import Class_Name
         from models.student_class_name import Student_Class_Name
 
-        rows = Student_Class_Name.find_by_student_id(self.id)
+        student_class_rows = Student_Class_Name.find_by_student_id(self.id)
+        rows = [Class_Name.find_by_id(row.class_name_id) for row in student_class_rows]
 
-        return [Class_Name.instance_from_db(row[1]) for row in rows]
+        return [Class_Name.instance_from_db([row.id, row.name]) for row in rows]
 
     def get_students(self):
         """ Return all the students that the teacher has. """

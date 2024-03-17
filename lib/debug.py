@@ -16,13 +16,13 @@ def debug():
     print(Class_Name.find_by_id(3))
     print(Student.find_by_id(2))
 
-    teacher_name = "todd brown"
-    print(teacher_name.title())
-    teacher = Teacher.find_by_name(teacher_name.title())
-    print(teacher)
-    teacher_classes = Teacher.get_classes(teacher)
-    print(teacher_classes)
-    teacher_students = Teacher.get_students(teacher)
-    print(teacher_students)
+    name = "john smith"
+    print(name.title())
+    obj = Student.find_by_name(name.title())
+    print(obj)
+    classes = Student.get_classes(obj)
+    print(classes)
+    # students = Teacher.get_students(obj)
+    # print(students)
 
 debug()
