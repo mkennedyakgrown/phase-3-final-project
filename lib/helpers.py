@@ -300,8 +300,13 @@ def update_teacher():
     print("********")
     print(f"Teacher {teacher.name} Updated:")
     print(teacher)
-    print(teacher.get_classes())
-    print(teacher.get_students())
+    classes = teacher.get_classes()
+    students = teacher.get_students()
+    for item in classes:
+        print(item.name)
+    for item in students:
+        print(item.name)
+    
     print("********")
 
 def update_student():
@@ -362,11 +367,103 @@ def update_student():
     print("********")
     print(f"Student {student.name} Updated:")
     print(student)
-    print(student.get_classes())
+    classes = student.get_classes()
+    for item in classes:
+        print(item.name)
     print("********")
 
 def update_class():
     print("Update Class:")
+    print("********")
+    name = ""
+    classes = Class_Name.get_all()
+    while True:
+        print("********")
+        print("Teachers Available:")
+        for item in classes:
+            print(item.name)
+        print("********")
+        name = input("Select Teacher to update:")
+        if Class_Name.find_by_name(name.title()):
+            break
+        elif name == "exit":
+            print("Exiting...")
+            exit()
+        else:
+            print(f"Class {name} not found")
+            name = ""
+    class_name =  Class_Name.find_by_name(name.title())
+    print("********")
+    print(f"Updating Class {class_name.name}...")
+    new_name = input("Enter new name (or blank to keep current):")
+    if new_name:
+        class_name.name = new_name.title()
+        class_name.save()
+    print("********")
+    teachers = set(class_name.get_teachers())
+    while True:
+        print(f"Assign Teachers (or blank to keep current):")
+        print("Available Teachers:")
+        teachers_list = Teacher.get_all()
+        for item in teachers_list:
+            print(item.name)
+        print("********")
+        print("Assigned Classes:")
+        for item in teachers:
+            print(item.name)
+        teacher_name = input("Enter teacher name to assign (or blank to stop):")
+        if teacher_name == "":
+            break
+        else:
+            new_teacher = Teacher.find_by_name(teacher_name.title())
+            if name == "exit":
+                print("Exiting...")
+                exit()
+            elif new_teacher:
+                teachers.add(new_teacher)
+            else:
+                print(f"Teacher {teacher_name} not found")
+    students = set(class_name.get_students())
+    while True:
+        print(f"Enroll Students (or blank to keep current):")
+        print("Available Students:")
+        students_list = Student.get_all()
+        for item in students_list:
+            print(item.name)
+        print("********")
+        print("Enrolled Students:")
+        for item in students:
+            print(item.name)
+        student_name = input("Enter student name to assign (or blank to stop):")
+        if student_name == "":
+            break
+        else:
+            new_student = Student.find_by_name(student_name.title())
+            if name == "exit":
+                print("Exiting...")
+                exit()
+            elif new_student:
+                students.add(new_student)
+            else:
+                print(f"Student {student_name} not found")
+    for item in teachers:
+        if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(class_name.id, item.id) is None:
+            teacher_class_name = Teacher_Class_Name(class_name.id, item.id)
+            teacher_class_name.save()
+    for item in students:
+        if Student_Class_Name.find_by_class_name_id_and_student_id(class_name.id, item.id) is None:
+            teacher_class_name = Teacher_Class_Name(class_name.id, item.id)
+            teacher_class_name.save()
+    print("********")
+    print(f"Class {class_name.name} Updated:")
+    print(class_name)
+    teachers = class_name.get_teachers()
+    students = class_name.get_students()
+    for item in teachers:
+        print(item.name)
+    for item in students:
+        print(item.name)
+    print("********")
 
 ### Teacher actions ###
     
