@@ -83,30 +83,9 @@ def add_teacher():
             break
         else:
             print("Name cannot be blank")
-    classes_list = Class_Name.get_all()
-    classes = set([])
-    while True:
-        print("********")
-        print("Classes Available:")
-        for item in classes_list:
-            print(item.name)
-        print("********")
-        print("Assigned Classes:")
-        for item in classes:
-            if item:
-                print(item.name)
-        print("********")
-        class_name = input("Enter class name to assign (or blank to stop):")
-        if class_name:
-            new_class = Class_Name.find_by_name(class_name.title())
-            if new_class:
-                classes.add(new_class)
-            else:
-                print(f"Class {class_name} not found")
-        else:
-            break
     teacher = Teacher(name.title())
     teacher.save()
+    classes = select_classes(teacher)
     for item in classes:
         teacher_class_name = Teacher_Class_Name(item.id, teacher.id)
         teacher_class_name.save()
@@ -131,30 +110,9 @@ def add_student():
             break
         else:
             print("Name cannot be blank")
-    classes_list = Class_Name.get_all()
-    classes = set([])
-    while True:
-        print("********")
-        print("Classes Available:")
-        for item in classes_list:
-            print(item.name)
-        print("********")
-        print("Enrolled Classes:")
-        for item in classes:
-            if item:
-                print(item.name)
-        print("********")
-        class_name = input("Enter class name to enroll (or blank to stop):")
-        if class_name:
-            new_class = Class_Name.find_by_name(class_name.title())
-            if new_class:
-                classes.add(new_class)
-            else:
-                print(f"Class {class_name} not found")
-        else:
-            break
     student = Student(name.title())
     student.save()
+    classes = select_classes(student)
     for item in classes:
         student_class_name = Student_Class_Name(item.id, student.id)
         student_class_name.save()
@@ -205,30 +163,9 @@ def add_class():
                 print(f"Teacher {teacher_name} not found")
         else:
             break
-    students_list = Student.get_all()
-    students = set([])
-    while True:
-        print("********")
-        print("Students Available:")
-        for item in students_list:
-            print(item.name)
-        print("********")
-        print("Enrolled Students:")
-        for item in students:
-            if item:
-                print(item.name)
-        print("********")
-        student_name = input("Enter student name to enroll (or blank to stop):")
-        if student_name:
-            new_student = Student.find_by_name(student_name.title())
-            if new_student:
-                students.add(new_student)
-            else:
-                print(f"Student {student_name} not found")
-        else:
-            break
     class_ = Class_Name(name.title())
     class_.save()
+    students = select_students(class_)
     for item in teachers:
         teacher_class_name = Teacher_Class_Name(class_.id, item.id)
         teacher_class_name.save()
@@ -379,11 +316,11 @@ def update_class():
     classes = Class_Name.get_all()
     while True:
         print("********")
-        print("Teachers Available:")
+        print("Classes Available:")
         for item in classes:
             print(item.name)
         print("********")
-        name = input("Select Teacher to update:")
+        name = input("Select Class to update:")
         if Class_Name.find_by_name(name.title()):
             break
         elif name == "exit":
@@ -423,37 +360,15 @@ def update_class():
                 teachers.add(new_teacher)
             else:
                 print(f"Teacher {teacher_name} not found")
-    students = set(class_name.get_students())
-    while True:
-        print(f"Enroll Students (or blank to keep current):")
-        print("Available Students:")
-        students_list = Student.get_all()
-        for item in students_list:
-            print(item.name)
-        print("********")
-        print("Enrolled Students:")
-        for item in students:
-            print(item.name)
-        student_name = input("Enter student name to assign (or blank to stop):")
-        if student_name == "":
-            break
-        else:
-            new_student = Student.find_by_name(student_name.title())
-            if name == "exit":
-                print("Exiting...")
-                exit()
-            elif new_student:
-                students.add(new_student)
-            else:
-                print(f"Student {student_name} not found")
+    students = select_students(class_name)
     for item in teachers:
         if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(class_name.id, item.id) is None:
             teacher_class_name = Teacher_Class_Name(class_name.id, item.id)
             teacher_class_name.save()
     for item in students:
         if Student_Class_Name.find_by_class_name_id_and_student_id(class_name.id, item.id) is None:
-            teacher_class_name = Teacher_Class_Name(class_name.id, item.id)
-            teacher_class_name.save()
+            student_class_name = Student_Class_Name(class_name.id, item.id)
+            student_class_name.save()
     print("********")
     print(f"Class {class_name.name} Updated:")
     print(class_name)
@@ -484,8 +399,76 @@ def list_all(cls, table):
         print(item)
     print("****************************************")
 
-def delete(cls, table):
-    print(cls, table)
+def delete(cls, row):
+    print(cls, row)
+
+def select_classes(obj):
+    classes_list = Class_Name.get_all()
+    classes = set([])
+    if obj:
+        classes = set(obj.get_classes())
+    while True:
+        print("********")
+        print("Classes Available:")
+        for item in classes_list:
+            print(item.name)
+        print("********")
+        print("Selected Classes:")
+        for item in classes:
+            if item:
+                print(item.name)
+        print("********")
+        class_name = input("Enter class name to select (or blank to stop):")
+        if class_name:
+            new_class = Class_Name.find_by_name(class_name.title())
+            if new_class:
+                classes.add(new_class)
+            else:
+                print(f"Class {class_name} not found")
+        else:
+            break
+
+    return classes
+
+def select_students(obj):
+    students_list = Student.get_all()
+    students = set([])
+    if obj:
+        students = set(obj.get_students())
+    while True:
+        print("********")
+        print("Students Available:")
+        for item in students_list:
+            print(item.name)
+        print("********")
+        print("Selected Students:")
+        for item in students:
+            if item:
+                print(item.name)
+        print("********")
+        student_name = input("Enter student name to select (or blank to stop):")
+        if student_name:
+            new_student = Student.find_by_name(student_name.title())
+            if new_student:
+                students.add(new_student)
+            else:
+                print(f"Student {student_name} not found")
+        else:
+            break
+
+    return students
+
+def remove_student_from_classes(student):
+    print("Remove student from classes")
+
+def remove_teacher_from_classes(teacher):
+    print("Remove teacher from classes")
+
+def remove_teachers_from_class(class_name):
+    print("Remove teachers from class")
+
+def remove_students_from_class(class_name):
+    print("Remove students from class")
 
 ############# ADMIN MENUS #############
 

@@ -15,27 +15,28 @@ def debug():
     from models.student_class_name import Student_Class_Name
     from models.teacher_class_name import Teacher_Class_Name
 
-    sql = """DROP TABLE IF EXISTS student_class_name
-     """
+    # sql = """DELETE FROM teacher_class_names
+    # WHERE teacher_id > 10
+    # """
 
-    CURSOR.execute(sql)
-    CONN.commit()
+    # CURSOR.execute(sql)
+    # CONN.commit()
 
-    name = "nick pearson"
+    name = "ballet 7"
     print(name.title())
-    obj = Student.find_by_name(name.title())
+    obj = Class_Name.find_by_name(name.title())
     print(obj)
-    # teachers = Class_Name.get_teachers(obj)
-    # print(teachers)
-    # students = Teacher.get_students(obj)
-    # for student in students:
-    #     print(student)
-    classes = Student.get_classes(obj)
-    for cls in classes:
-        print(cls)
+    teachers = Class_Name.get_teachers(obj)
+    print(teachers)
+    students = Class_Name.get_students(obj)
+    for student in students:
+        print(student)
+    # classes = Student.get_classes(obj)
+    # for cls in classes:
+    #     print(cls)
 
-    for cls in classes:
-        print(cls.name)
-        print(Student_Class_Name.find_by_class_name_id_and_student_id(cls.id, obj.id))
+    # for cls in classes:
+    #     print(cls.name)
+    #     print(Student_Class_Name.find_by_class_name_id_and_student_id(cls.id, obj.id))
 
 debug()
