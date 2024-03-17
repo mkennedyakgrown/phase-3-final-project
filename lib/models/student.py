@@ -129,7 +129,7 @@ class Student:
             FROM students 
             WHERE id = ?
         """
-        row = CURSOR.execute(sql, (id,)).fetchall()
+        row = CURSOR.execute(sql, (id,)).fetchone()
 
         return cls.instance_from_db(row) if row else None
     
@@ -142,21 +142,12 @@ class Student:
             FROM students
             WHERE name = ?
         """
-        row = CURSOR.execute(sql, (name,)).fetchall()
+        row = CURSOR.execute(sql, (name,)).fetchone()
 
         return cls.instance_from_db(row) if row else None
     
     def get_classes(self):
         """ Return all the classes that the student has. """
-        from models.class_name import Class_Name
-        from models.student_class_name import Student_Class_Name
-
-        rows = Student_Class_Name.find_by_student_id(self.id)
-
-        return [Class_Name.instance_from_db(row[1]) for row in rows]
-    
-    def get_classes(self):
-        """ Return all the classes that the teacher has. """
         from models.class_name import Class_Name
         from models.student_class_name import Student_Class_Name
 

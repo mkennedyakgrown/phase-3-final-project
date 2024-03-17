@@ -23,7 +23,7 @@ class Student_Class_Name:
     @class_name_id.setter
     def class_name_id(self, class_name_id):
         from models.class_name import Class_Name
-        if isinstance(class_name_id, int) and Class_Name.all[class_name_id]:
+        if isinstance(class_name_id, int) and Class_Name.find_by_id(class_name_id):
             self._class_name_id = class_name_id
         else:
             raise ValueError(
@@ -37,7 +37,7 @@ class Student_Class_Name:
     @student_id.setter
     def student_id(self, student_id):
         from models.student import Student
-        if isinstance(student_id, int) and Student.all[student_id]:
+        if isinstance(student_id, int) and Student.find_by_id(student_id):
             self._student_id = student_id
         else:
             raise ValueError(
@@ -105,7 +105,7 @@ class Student_Class_Name:
     @classmethod
     def instance_from_db(cls, row):
         """ Return a student_class_name instance from the database. """
-
+        
         student_class_name = cls.all.get(row[0])
         if student_class_name:
             student_class_name.class_name_id = row[1]
