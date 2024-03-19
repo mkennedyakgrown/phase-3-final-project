@@ -67,61 +67,44 @@ def search_classes():
         print(f"Class {name} not found")
         print("********")
 
-def add_teacher():
-    print("Add teacher:")
+def add_obj(cls):
+    print(f"Add {cls.__name__}:")
     print("********")
-    name = select_name(Teacher)
-    teacher = Teacher(name.title())
-    teacher.save()
-    add_objs(Class_Name, teacher)
+    name = select_name(cls)
+    obj = cls(name.title())
+    obj.save()
+    if cls is Teacher or cls is Student:
+        add_objs(Class_Name, obj)
+    if cls is Class_Name:
+        add_objs(Teacher, obj)
+        add_objs(Student, obj)
     print("********")
-    print("New Teacher Added:")
-    print(teacher)
-    print("Classes:")
-    classes = teacher.get_classes()
-    for item in classes:
-        print("    * ", item)
-    students = teacher.get_students()
-    print("Students:")
-    for item in students:
-        print("    * ", item)
-    print("********")
-
-def add_student():
-    print("Add student:")
-    print("********")
-    name = select_name(Student)
-    student = Student(name.title())
-    student.save()
-    add_objs(Class_Name, student)
-    print("********")
-    print("New Student Added:")
-    print(student)
-    classes = student.get_classes()
-    print("Classes:")
-    for item in classes:
-        print("    * ", item)
-    print("********")
-
-def add_class():
-    print("Add Class:")
-    print("********")
-    name = select_name(Class_Name)
-    class_ = Class_Name(name.title())
-    class_.save()
-    add_objs(Teacher, class_)
-    add_objs(Student, class_)
-    print("********")
-    print("New Class Added:")
-    print(class_)
-    print("Teachers:")
-    teachers = class_.get_teachers()
-    students = class_.get_students()
-    for item in teachers:
-        print("    * ", item)
-    print("Students:")
-    for item in students:
-        print("    * ", item)
+    print(f"New {cls.__name__} Added:")
+    print(obj)
+    if cls is Teacher:
+        print("Teachers:")
+        classes = obj.get_classes()
+        students = obj.get_students()
+        print("Classes:")
+        for item in classes:
+            print("    * ", item)
+        print("Students:")
+        for item in students:
+            print("    * ", item)
+    if cls is Student:
+        print("Classes:")
+        classes = obj.get_classes()
+        for item in classes:
+            print("    * ", item)
+    if cls is Class_Name:
+        teachers = obj.get_teachers()
+        print("Teachers:")
+        for item in teachers:
+            print("    * ", item)
+        students = obj.get_students()
+        print("Students:")
+        for item in students:
+            print("    * ", item)
     print("********")
 
 def update_obj(cls):
@@ -274,10 +257,10 @@ def add_objs(cls, obj):
                 teacher_class_name.save()
     if type(obj) is Class_Name:
         for item in objs:
-            if Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id) is None:
+            if cls is Student and Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id) is None:
                 student_class_name = Student_Class_Name(obj.id, item.id)
                 student_class_name.save()
-            if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id) is None:
+            if cls is Teacher and Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id) is None:
                 teacher_class_name = Teacher_Class_Name(obj.id, item.id)
                 teacher_class_name.save()
 
@@ -371,9 +354,9 @@ admin_add_menu = {
     • Teacher
     • Student
     • Class""",
-    "teacher": add_teacher,
-    "student": add_student,
-    "class": add_class
+    "teacher": [add_obj, Teacher],
+    "student": [add_obj, Student],
+    "class": [add_obj, Class_Name]
 }
 
 admin_update_menu = {
@@ -407,9 +390,9 @@ admin_menu = {
     "students info": admin_students_info_menu,
     "classes info": admin_classes_info_menu,
     "add": admin_add_menu,
-    "add teacher": add_teacher,
-    "add student": add_student,
-    "add class": add_class,
+    "add teacher": [add_obj, Teacher],
+    "add student": [add_obj, Student],
+    "add class": [add_obj, Class_Name],
     "update": admin_update_menu,
     "update teacher": [update_obj, Teacher],
     "update student": [update_obj, Student],
