@@ -331,8 +331,21 @@ def list_all(cls, table):
         print(item)
     print("****************************************")
 
-def delete(cls, row):
-    print(cls, row)
+def delete_row(cls, row):
+    print("********")
+    print(f"Available {cls.__name__}s:")
+    obj_list = cls.get_all()
+    for item in obj_list:
+        print(item)
+    print("********")
+    name = input(f"Enter {cls.__name__} name to delete:")
+    obj = cls.find_by_name(name.title())
+    if obj:
+        obj.delete()
+        print(f"{cls.__name__} {name} deleted")
+    else:
+        print(f"{cls.__name__} {name} not found")
+    print("********")
 
 def select_classes(obj):
     classes_list = Class_Name.get_all()
@@ -591,9 +604,9 @@ admin_delete_menu = {
     • Teacher
     • Student
     • Class""",
-    "teacher": [delete, Teacher, "teachers"],
-    "student": [delete, Student, "students"],
-    "class": [delete, Class_Name, "class_names"]
+    "teacher": [delete_row, Teacher, "teachers"],
+    "student": [delete_row, Student, "students"],
+    "class": [delete_row, Class_Name, "class_names"]
 }
 
 admin_menu = {
@@ -615,9 +628,9 @@ admin_menu = {
     "update student": update_student,
     "update class": update_class,
     "delete": admin_delete_menu,
-    "delete teacher": [delete, Teacher, "teachers"],
-    "delete student": [delete, Student, "students"],
-    "delete class": [delete, Class_Name, "class_names"]
+    "delete teacher": [delete_row, Teacher, "teachers"],
+    "delete student": [delete_row, Student, "students"],
+    "delete class": [delete_row, Class_Name, "class_names"]
 }
 
 ############# TEACHER MENUS #############
