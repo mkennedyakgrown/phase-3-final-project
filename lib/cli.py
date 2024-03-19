@@ -35,7 +35,13 @@ def show_menu(menu_items):
                 show_menu(prev_menu)
 
             ### If the menu item is a list, call the function using parameters ###
-            elif type(menu_items[choice]) == list:
+            elif type(menu_items[choice]) == list and len(menu_items[choice]) == 2:
+                menu_items[choice][0](menu_items[choice][1])
+                prev_menu = menu_stack.pop()
+                show_menu(prev_menu)
+
+            ### If the menu item is a list, call the function using parameters ###
+            elif type(menu_items[choice]) == list and len(menu_items[choice]) == 3:
                 menu_items[choice][0](menu_items[choice][1], menu_items[choice][2])
                 prev_menu = menu_stack.pop()
                 show_menu(prev_menu)
