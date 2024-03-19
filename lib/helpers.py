@@ -73,7 +73,7 @@ def add_teacher():
     name = select_name(Teacher)
     teacher = Teacher(name.title())
     teacher.save()
-    classes = select_classes(teacher)
+    classes = select_objs(Class_Name, teacher)
     for item in classes:
         teacher_class_name = Teacher_Class_Name(item.id, teacher.id)
         teacher_class_name.save()
@@ -95,7 +95,7 @@ def add_student():
     name = select_name(Student)
     student = Student(name.title())
     student.save()
-    classes = select_classes(student)
+    classes = select_objs(Class_Name, student)
     for item in classes:
         student_class_name = Student_Class_Name(item.id, student.id)
         student_class_name.save()
@@ -114,8 +114,8 @@ def add_class():
     name = select_name(Class_Name)
     class_ = Class_Name(name.title())
     class_.save()
-    students = select_students(class_)
-    teachers = select_teachers(class_)
+    teachers = select_objs(Teacher, class_)
+    students = select_objs(Student, class_)
     for item in teachers:
         teacher_class_name = Teacher_Class_Name(class_.id, item.id)
         teacher_class_name.save()
@@ -132,12 +132,6 @@ def add_class():
     for item in students:
         print("    * ", item)
     print("********")
-
-def update_name(obj):
-    new_name = input("Enter new name (or blank to keep current):")
-    if new_name:
-        obj.name = new_name.title()
-        obj.save()
 
 def update_teacher():
     print("Update teacher:")
@@ -164,7 +158,7 @@ def update_teacher():
     print(f"Updating Teacher {teacher.name}...")
     update_name(teacher)
     print("********")
-    classes = select_classes(teacher)
+    classes = select_objs(Class_Name, teacher)
     classes = remove_classes(teacher, classes)
     for item in classes:
         if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, teacher.id) is None:
@@ -209,7 +203,7 @@ def update_student():
     print(f"Updating Student {student.name}...")
     update_name(student)
     print("********")
-    classes = select_classes(student)
+    classes = select_objs(Class_Name, student)
     classes = remove_classes(student, classes)
     for item in classes:
         if Student_Class_Name.find_by_class_name_id_and_student_id(item.id, student.id) is None:
@@ -249,9 +243,9 @@ def update_class():
     print(f"Updating Class {class_name.name}...")
     update_name(class_name)
     print("********")
-    teachers = select_teachers(class_name)
+    teachers = select_objs(Teacher, class_name)
     teachers = remove_teachers(class_name, teachers)
-    students = select_students(class_name)
+    students = select_objs(Student, class_name)
     students = remove_students(class_name, students)
     for item in teachers:
         if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(class_name.id, item.id) is None:
@@ -333,89 +327,43 @@ def select_name(cls):
             break
     return name
 
-def select_classes(obj):
-    classes_list = Class_Name.get_all()
-    classes = set([])
-    if obj:
-        classes = set(obj.get_classes())
+def update_name(obj):
+    new_name = input("Enter new name (or blank to keep current):")
+    if new_name:
+        obj.name = new_name.title()
+        obj.save()
+
+def select_objs(cls, obj):
+    obj_list = cls.get_all()
+    objs = set([])
+    if cls is Student and obj:
+        objs = set(obj.get_students())
+    elif cls is Teacher and obj:
+        objs = set(obj.get_teachers())
+    elif cls is Class_Name and obj:
+        objs = set(obj.get_classes())
     while True:
         print("********")
-        print("Classes Available:")
-        for item in classes_list:
+        print(f"{cls.__name__}s Available:")
+        for item in obj_list:
             print(item.name)
         print("********")
-        print("Selected Classes:")
-        for item in classes:
+        print(f"Selected {cls.__name__}s:")
+        for item in objs:
             if item:
                 print(item.name)
         print("********")
-        class_name = input("Enter class name to ADD to enrollment (or blank to stop):")
-        if class_name:
-            new_class = Class_Name.find_by_name(class_name.title())
-            if new_class:
-                classes.add(new_class)
+        name = input("Enter class name to ADD to enrollment (or blank to stop):")
+        if name:
+            new_obj = cls.find_by_name(name.title())
+            if new_obj:
+                objs.add(new_obj)
             else:
-                print(f"Class {class_name} not found")
+                print(f"{cls.__name__} {name} not found")
         else:
             break
 
-    return classes
-
-def select_students(obj):
-    students_list = Student.get_all()
-    students = set([])
-    if obj:
-        students = set(obj.get_students())
-    while True:
-        print("********")
-        print("Students Available:")
-        for item in students_list:
-            print(item.name)
-        print("********")
-        print("Selected Students:")
-        for item in students:
-            if item:
-                print(item.name)
-        print("********")
-        student_name = input("Enter student name to ADD to class (or blank to stop):")
-        if student_name:
-            new_student = Student.find_by_name(student_name.title())
-            if new_student:
-                students.add(new_student)
-            else:
-                print(f"Student {student_name} not found")
-        else:
-            break
-
-    return students
-
-def select_teachers(obj):
-    teachers_list = Teacher.get_all()
-    teachers = set([])
-    if obj:
-        teachers = set(obj.get_teachers())
-    while True:
-        print("********")
-        print("Teachers Available:")
-        for item in teachers_list:
-            print(item.name)
-        print("********")
-        print("Selected Teachers:")
-        for item in teachers:
-            if item:
-                print(item.name)
-        print("********")
-        teacher_name = input("Enter teacher name to ADD to class (or blank to stop):")
-        if teacher_name:
-            new_teacher = Teacher.find_by_name(teacher_name.title())
-            if new_teacher:
-                teachers.add(new_teacher)
-            else:
-                print(f"Teacher {teacher_name} not found")
-        else:
-            break
-
-    return teachers
+    return objs
 
 def remove_students(obj, students):
     curr_students = set(students)
