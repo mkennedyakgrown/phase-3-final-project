@@ -197,6 +197,7 @@ def update_teacher():
         teacher.save()
     print("********")
     classes = select_classes(teacher)
+    classes = remove_classes(teacher, classes)
     for item in classes:
         if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, teacher.id) is None:
             teacher_class_name = Teacher_Class_Name(item.id, teacher.id)
@@ -244,6 +245,7 @@ def update_student():
         student.save()
     print("********")
     classes = select_classes(student)
+    classes = remove_classes(student, classes)
     for item in classes:
         if Student_Class_Name.find_by_class_name_id_and_student_id(item.id, student.id) is None:
             student_class_name = Student_Class_Name(item.id, student.id)
@@ -288,6 +290,7 @@ def update_class():
     teachers = select_teachers(class_name)
     teachers = remove_teachers(class_name, teachers)
     students = select_students(class_name)
+    students = remove_students(class_name, students)
     for item in teachers:
         if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(class_name.id, item.id) is None:
             teacher_class_name = Teacher_Class_Name(class_name.id, item.id)
@@ -347,7 +350,7 @@ def select_classes(obj):
             if item:
                 print(item.name)
         print("********")
-        class_name = input("Enter class name to select (or blank to stop):")
+        class_name = input("Enter class name to ADD to enrollment (or blank to stop):")
         if class_name:
             new_class = Class_Name.find_by_name(class_name.title())
             if new_class:
@@ -415,12 +418,40 @@ def select_teachers(obj):
 
     return teachers
 
-def remove_students(obj):
-    print("Remove student from classes")
+def remove_students(obj, students):
+    curr_students = set(students)
+    remove_students_set = set([])
+    while True:
+        print("********")
+        print("Current Students:")
+        for item in curr_students:
+            if item:
+                print(item.name)
+        print("********")
+        name = input("Enter student name to REMOVE from class (or blank to stop):")
+        if name:
+            new_student = Student.find_by_name(name.title())
+            if new_student:
+                curr_students.discard(new_student)
+                remove_students_set.add(new_student)
+            else:
+                print(f"Student {name} not found")
+        else:
+            break
+
+    sql = """
+        DELETE FROM student_class_names
+        WHERE student_id = ?"""
+    
+    for item in remove_students_set:
+        CURSOR.execute(sql, (item.id,))
+        CONN.commit()
+
+    return curr_students
 
 def remove_teachers(obj, teachers):
     curr_teachers = set(teachers)
-    remove_teachers = set([])
+    remove_teachers_set = set([])
     while True:
         print("********")
         print("Current Teachers:")
@@ -433,7 +464,7 @@ def remove_teachers(obj, teachers):
             new_teacher = Teacher.find_by_name(teacher_name.title())
             if new_teacher:
                 curr_teachers.discard(new_teacher)
-                remove_teachers.add(new_teacher)
+                remove_teachers_set.add(new_teacher)
             else:
                 print(f"Teacher {teacher_name} not found")
         else:
@@ -443,14 +474,42 @@ def remove_teachers(obj, teachers):
         DELETE FROM teacher_class_names
         WHERE teacher_id = ?"""
     
-    for item in remove_teachers:
+    for item in remove_teachers_set:
         CURSOR.execute(sql, (item.id,))
         CONN.commit()
 
     return curr_teachers
 
-def remove_classes(obj):
-    print("Remove teachers from class")
+def remove_classes(obj, classes):
+    curr_classes = set(classes)
+    remove_classes_set = set([])
+    while True:
+        print("********")
+        print("Current Classes:")
+        for item in curr_classes:
+            if item:
+                print(item.name)
+        print("********")
+        name = input("Enter class name to REMOVE from enrollment (or blank to stop):")
+        if name:
+            new_class = Class_Name.find_by_name(name.title())
+            if new_class:
+                curr_classes.discard(new_class)
+                remove_classes_set.add(new_class)
+            else:
+                print(f"Class {name} not found")
+        else:
+            break
+
+    sql = """
+        DELETE FROM student_class_names
+        WHERE class_name_id = ?"""
+    
+    for item in remove_classes_set:
+        CURSOR.execute(sql, (item.id,))
+        CONN.commit()
+
+    return curr_classes
 
 ############# ADMIN MENUS #############
 
