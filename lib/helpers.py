@@ -441,10 +441,11 @@ def remove_students(obj, students):
 
     sql = """
         DELETE FROM student_class_names
-        WHERE student_id = ?"""
+        WHERE student_id = ?
+        AND class_name_id = ?"""
     
     for item in remove_students_set:
-        CURSOR.execute(sql, (item.id,))
+        CURSOR.execute(sql, (item.id, obj.id,))
         CONN.commit()
 
     return curr_students
@@ -472,10 +473,11 @@ def remove_teachers(obj, teachers):
 
     sql = """
         DELETE FROM teacher_class_names
-        WHERE teacher_id = ?"""
+        WHERE teacher_id = ?
+        AND class_name_id = ?"""
     
     for item in remove_teachers_set:
-        CURSOR.execute(sql, (item.id,))
+        CURSOR.execute(sql, (item.id, obj.id,))
         CONN.commit()
 
     return curr_teachers
@@ -501,12 +503,20 @@ def remove_classes(obj, classes):
         else:
             break
 
-    sql = """
-        DELETE FROM student_class_names
-        WHERE class_name_id = ?"""
+    sql = ""
+    if type(obj) == Student:
+        sql = """
+            DELETE FROM student_class_names
+            WHERE class_name_id = ?
+            AND student_id = ?"""
+    elif type(obj) == Teacher:
+        sql = """
+            DELETE FROM teacher_class_names
+            WHERE class_name_id = ?
+            AND teacher_id = ?"""
     
     for item in remove_classes_set:
-        CURSOR.execute(sql, (item.id,))
+        CURSOR.execute(sql, (item.id, obj.id,))
         CONN.commit()
 
     return curr_classes
