@@ -83,6 +83,13 @@ class Teacher:
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
+        sql = """
+            DELETE FROM teacher_class_names
+            WHERE teacher_id = ?
+        """
+        CURSOR.execute(sql, (self.id,))
+        CONN.commit()
+
         del type(self).all[self.id]
 
         self.id = None
@@ -172,5 +179,5 @@ class Teacher:
         students = set([])
         for row in rows:
             students.add(Student.instance_from_db([row.id, row.name]))
-            
+
         return students

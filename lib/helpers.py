@@ -70,19 +70,7 @@ def search_classes():
 def add_teacher():
     print("Add teacher:")
     print("********")
-    name = ""
-    while True:
-        name = input("Enter new teacher name:")
-        if Teacher.find_by_name(name.title()):
-            print(f"Teacher {name} already exists")
-            name = ""
-        elif name == "exit":
-            print("Exiting...")
-            exit()
-        elif name:
-            break
-        else:
-            print("Name cannot be blank")
+    name = select_name(Teacher)
     teacher = Teacher(name.title())
     teacher.save()
     classes = select_classes(teacher)
@@ -104,18 +92,7 @@ def add_teacher():
 def add_student():
     print("Add student:")
     print("********")
-    name = ""
-    while True:
-        name = input("Enter new student name:")
-        if Student.find_by_name(name.title()):
-            print(f"Student {name} already exists")
-        elif name == "exit":
-            print("Exiting...")
-            exit()
-        elif name:
-            break
-        else:
-            print("Name cannot be blank")
+    name = select_name(Student)
     student = Student(name.title())
     student.save()
     classes = select_classes(student)
@@ -134,19 +111,7 @@ def add_student():
 def add_class():
     print("Add Class:")
     print("********")
-    name = ""
-    while True:
-        name = input("Enter new class name:")
-        if Class_Name.find_by_name(name.title()):
-            print(f"Class {name} already exists")
-            name = ""
-        elif name == "exit":
-            print("Exiting...")
-            exit()
-        elif name:
-            break
-        else:
-            print("Name cannot be blank")
+    name = select_name(Class_Name)
     class_ = Class_Name(name.title())
     class_.save()
     students = select_students(class_)
@@ -167,6 +132,12 @@ def add_class():
     for item in students:
         print("    * ", item)
     print("********")
+
+def update_name(obj):
+    new_name = input("Enter new name (or blank to keep current):")
+    if new_name:
+        obj.name = new_name.title()
+        obj.save()
 
 def update_teacher():
     print("Update teacher:")
@@ -191,10 +162,7 @@ def update_teacher():
     teacher = Teacher.find_by_name(name.title())
     print("********")
     print(f"Updating Teacher {teacher.name}...")
-    new_name = input("Enter new name (or blank to keep current):")
-    if new_name:
-        teacher.name = new_name.title()
-        teacher.save()
+    update_name(teacher)
     print("********")
     classes = select_classes(teacher)
     classes = remove_classes(teacher, classes)
@@ -239,10 +207,7 @@ def update_student():
     student = Student.find_by_name(name.title())
     print("********")
     print(f"Updating Student {student.name}...")
-    new_name = input("Enter new name (or blank to keep current):")
-    if new_name:
-        student.name = new_name.title()
-        student.save()
+    update_name(student)
     print("********")
     classes = select_classes(student)
     classes = remove_classes(student, classes)
@@ -282,10 +247,7 @@ def update_class():
     class_name =  Class_Name.find_by_name(name.title())
     print("********")
     print(f"Updating Class {class_name.name}...")
-    new_name = input("Enter new name (or blank to keep current):")
-    if new_name:
-        class_name.name = new_name.title()
-        class_name.save()
+    update_name(class_name)
     print("********")
     teachers = select_teachers(class_name)
     teachers = remove_teachers(class_name, teachers)
@@ -317,6 +279,15 @@ def update_class():
 def write_report(teacher):
     print(teacher)
 
+def teacher_view_reports(teacher):
+    print(teacher)
+
+def teacher_view_classes(teacher):
+    print(teacher)
+
+def teacher_view_students(teacher):
+    print(teacher)
+
 ### Student actions ###
 
 def student_view_reports(student):
@@ -346,6 +317,21 @@ def delete_row(cls, row):
     else:
         print(f"{cls.__name__} {name} not found")
     print("********")
+
+def select_name(cls):
+    while True:
+        name = input(f"Enter {cls.__name__} name:")
+        if cls.find_by_name(name.title()):
+            print(f"{cls.__name__} {name} already exists")
+            name = ""
+        elif name == "exit":
+            print("Exiting...")
+            exit()
+        elif name == "":
+            print("Name cannot be blank")
+        else:
+            break
+    return name
 
 def select_classes(obj):
     classes_list = Class_Name.get_all()
@@ -451,15 +437,9 @@ def remove_students(obj, students):
                 print(f"Student {name} not found")
         else:
             break
-
-    sql = """
-        DELETE FROM student_class_names
-        WHERE student_id = ?
-        AND class_name_id = ?"""
     
     for item in remove_students_set:
-        CURSOR.execute(sql, (item.id, obj.id,))
-        CONN.commit()
+        Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id).delete()
 
     return curr_students
 
@@ -483,15 +463,9 @@ def remove_teachers(obj, teachers):
                 print(f"Teacher {teacher_name} not found")
         else:
             break
-
-    sql = """
-        DELETE FROM teacher_class_names
-        WHERE teacher_id = ?
-        AND class_name_id = ?"""
     
     for item in remove_teachers_set:
-        CURSOR.execute(sql, (item.id, obj.id,))
-        CONN.commit()
+        Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id).delete()
 
     return curr_teachers
 
@@ -515,22 +489,12 @@ def remove_classes(obj, classes):
                 print(f"Class {name} not found")
         else:
             break
-
-    sql = ""
-    if type(obj) == Student:
-        sql = """
-            DELETE FROM student_class_names
-            WHERE class_name_id = ?
-            AND student_id = ?"""
-    elif type(obj) == Teacher:
-        sql = """
-            DELETE FROM teacher_class_names
-            WHERE class_name_id = ?
-            AND teacher_id = ?"""
     
     for item in remove_classes_set:
-        CURSOR.execute(sql, (item.id, obj.id,))
-        CONN.commit()
+        if type(obj) == Student:
+            Student_Class_Name.find_by_class_name_id_and_student_id(item.id, obj.id).delete()
+        if type(obj) == Teacher:
+            Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, obj.id).delete()
 
     return curr_classes
 
@@ -635,14 +599,43 @@ admin_menu = {
 
 ############# TEACHER MENUS #############
 
+teacher_info_menu = {
+    "menu_text": """What info do you want to view?
+    • View Classes
+    • View Students""",
+    "view classes": teacher_view_classes,
+    "classes": teacher_view_classes,
+    "view students": teacher_view_students,
+    "students": teacher_view_students
+}
+
+teacher_update_info_menu = {
+    "menu_text": """What info do you want to update?
+    • Update Name
+    • Update Classes""",
+    "update name": select_name,
+    "name": select_name,
+    "update classes": select_classes,
+    "classes": select_classes
+}
+
 teacher_menu = {
-    "Write Report": write_report,
+    "menu_text": """Welcome, Teacher! Select what to do:
+    • View Info
+    • Update Info
+    • Write Report""",
+    "view info": teacher_info_menu,
+    "view": teacher_info_menu,
+    "update info": teacher_update_info_menu,
+    "update": teacher_update_info_menu,
+    "view reports": teacher_view_reports,
+    "write report": write_report,
 }
 
 ############# STUDENT MENUS #############
 
 student_menu = {
-    "View Reports": student_view_reports,
+    "view reports": student_view_reports,
 }
 
 ############# MAIN MENU #############

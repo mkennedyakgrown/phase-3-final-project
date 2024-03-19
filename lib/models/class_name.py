@@ -87,6 +87,20 @@ class Class_Name:
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
+        sql = """
+            DELETE FROM student_class_names
+            WHERE class_name_id = ?"""
+
+        CURSOR.execute(sql, (self.id,))
+        CONN.commit()
+
+        sql = """
+            DELETE FROM teacher_class_names
+            WHERE class_name_id = ?"""
+
+        CURSOR.execute(sql, (self.id,))
+        CONN.commit()
+
         del type(self).all[self.id]
 
         self.id = None
