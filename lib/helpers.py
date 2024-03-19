@@ -181,24 +181,7 @@ def update_teacher():
 def update_student():
     print("Update student:")
     print("********")
-    name = ""
-    students = Student.get_all()
-    while True:
-        print("********")
-        print("Students Available:")
-        for item in students:
-            print(item.name)
-        print("********")
-        name = input("Select Student to update:")
-        if Student.find_by_name(name.title()):
-            break
-        elif name == "exit":
-            print("Exiting...")
-            exit()
-        else:
-            print(f"Student {name} not found")
-            name = ""
-    student = Student.find_by_name(name.title())
+    student = select_obj(Student)
     print("********")
     print(f"Updating Student {student.name}...")
     update_name(student)
@@ -221,24 +204,7 @@ def update_student():
 def update_class():
     print("Update Class:")
     print("********")
-    name = ""
-    classes = Class_Name.get_all()
-    while True:
-        print("********")
-        print("Classes Available:")
-        for item in classes:
-            print(item.name)
-        print("********")
-        name = input("Select Class to update:")
-        if Class_Name.find_by_name(name.title()):
-            break
-        elif name == "exit":
-            print("Exiting...")
-            exit()
-        else:
-            print(f"Class {name} not found")
-            name = ""
-    class_name =  Class_Name.find_by_name(name.title())
+    class_name = select_obj(Class_Name)
     print("********")
     print(f"Updating Class {class_name.name}...")
     update_name(class_name)
@@ -332,6 +298,25 @@ def update_name(obj):
     if new_name:
         obj.name = new_name.title()
         obj.save()
+
+def select_obj(cls):
+    obj_list = cls.get_all()
+    while True:
+        print("********")
+        print(f"List of {cls.__name__}s:")
+        for item in obj_list:
+            print(item.name)
+        print("********")
+        name = input("Enter name to select:")
+        if name:
+            obj = cls.find_by_name(name.title())
+            if obj:
+                break
+            else:
+                print(f"{cls.__name__} {name} not found")
+        else:
+            break
+    return obj
 
 def select_objs(cls, obj):
     obj_list = cls.get_all()
@@ -562,9 +547,7 @@ teacher_update_info_menu = {
     • Update Name
     • Update Classes""",
     "update name": select_name,
-    "name": select_name,
-    "update classes": select_classes,
-    "classes": select_classes
+    "name": select_name
 }
 
 teacher_menu = {
