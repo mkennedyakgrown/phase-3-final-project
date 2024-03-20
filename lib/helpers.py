@@ -9,9 +9,10 @@ from models.class_name import Class_Name
 
 ### Admin actions ###
             
-def search_teachers():
+def search_teachers(name=""):
     print("Search teachers:")
-    name = input("Enter name:")
+    if name is "":
+        name = input("Enter name:")
     teacher = Teacher.find_by_name(name.title())
     if teacher:
         classes = teacher.get_classes()
@@ -107,43 +108,36 @@ def add_obj(cls):
             print("    * ", item)
     print("********")
 
-def update_obj(cls):
-    print("Update " + cls.__name__ + ":")
-    print("********")
-    obj = select_obj(cls)
-    print("********")
-    while True:
-        if cls is Teacher or cls is Student:
-            print("""What do you want to update?:
-    • Name
-    • Add Classes
-    • Remove Classes
-    • Exit""")
-            choice = input("Select:").lower()
-            if choice == "name":
-                update_name(obj)
-            elif choice == "add classes" or choice == "add":
-                add_objs(Class_Name, obj)
-            elif choice == "remove classes" or choice == "remove":
-                remove_objs(Class_Name, obj)
-            elif choice == "exit":
-                break
-        if cls is Class_Name:
-            pass
-
 ### Teacher actions ###
     
 def write_report(teacher):
     print(teacher)
 
+def teacher_info():
+    print("Please select a teacher:")
+    teacher = select_obj(Teacher)
+    search_teachers(teacher.name)
+
+def teacher_update_info():
+    print("Please select a teacher:")
+    teacher = select_obj(Teacher)
+    print("********")
+    update_obj(Teacher, teacher)
+
 def teacher_view_reports(teacher):
     print(teacher)
 
-def teacher_view_classes(teacher):
-    print(teacher)
+def teacher_write_report():
+    pass
 
-def teacher_view_students(teacher):
-    print(teacher)
+def teacher_update_report():
+    pass
+
+def teacher_delete_report():
+    pass
+
+def teacher_remaining_reports():
+    pass
 
 ### Student actions ###
 
@@ -195,6 +189,32 @@ def update_name(obj):
     if new_name:
         obj.name = new_name.title()
         obj.update()
+
+def update_obj(cls, obj=None):
+    print("Update " + cls.__name__ + ":")
+    if obj is None:
+        print("********")
+        obj = select_obj(cls)
+    print("********")
+    print(f"Updating {obj.name}")
+    while True:
+        if cls is Teacher or cls is Student:
+            print("""What do you want to update?:
+    • Name
+    • Add Classes
+    • Remove Classes
+    • Exit""")
+            choice = input("Select:").lower()
+            if choice == "name":
+                update_name(obj)
+            elif choice == "add classes" or choice == "add":
+                add_objs(Class_Name, obj)
+            elif choice == "remove classes" or choice == "remove":
+                remove_objs(Class_Name, obj)
+            elif choice == "exit":
+                break
+        if cls is Class_Name:
+            pass
 
 def select_obj(cls):
     obj_list = cls.get_all()
@@ -405,35 +425,20 @@ admin_menu = {
 
 ############# TEACHER MENUS #############
 
-teacher_info_menu = {
-    "menu_text": """What info do you want to view?
-    • View Classes
-    • View Students""",
-    "view classes": teacher_view_classes,
-    "classes": teacher_view_classes,
-    "view students": teacher_view_students,
-    "students": teacher_view_students
-}
-
-teacher_update_info_menu = {
-    "menu_text": """What info do you want to update?
-    • Update Name
-    • Update Classes""",
-    "update name": select_name,
-    "name": select_name
-}
-
 teacher_menu = {
     "menu_text": """Welcome, Teacher! Select what to do:
     • View Info
     • Update Info
     • Write Report""",
-    "view info": teacher_info_menu,
-    "view": teacher_info_menu,
-    "update info": teacher_update_info_menu,
-    "update": teacher_update_info_menu,
+    "view info": teacher_info,
+    "update info": teacher_update_info,
     "view reports": teacher_view_reports,
     "write report": write_report,
+    "update report": teacher_update_report,
+    "delete report": teacher_delete_report,
+    "view remaining reports": teacher_remaining_reports,
+    "remaining reports": teacher_remaining_reports,
+    "exit": exit
 }
 
 ############# STUDENT MENUS #############
