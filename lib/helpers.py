@@ -1,6 +1,6 @@
 # lib/helpers.py
-from models.__init__ import CONN, CURSOR
 
+from models.__init__ import CONN, CURSOR
 from models.teacher import Teacher
 from models.student import Student
 from models.student_class_name import Student_Class_Name
@@ -11,7 +11,7 @@ from models.class_name import Class_Name
             
 def search_teachers(name=""):
     print("Search teachers:")
-    if name is "":
+    if name == "":
         name = input("Enter name:")
     teacher = Teacher.find_by_name(name.title())
     if teacher:
@@ -31,9 +31,10 @@ def search_teachers(name=""):
         print(f"Teacher {name} not found")
         print("********")
 
-def search_students():
+def search_students(name=""):
     print("Search students:")
-    name = input("Enter name:").capitalize()
+    if name == "":
+        name = input("Enter name:").capitalize()
     student = Student.find_by_name(name.title())
     if student:
         classes = student.get_classes()
@@ -143,6 +144,11 @@ def teacher_remaining_reports():
 
 def student_view_reports(student):
     print(student)
+
+def student_info():
+    print("Please select a student:")
+    student = select_obj(Student)
+    search_students(student.name)
 
 ### Reuseable actions ###
 
@@ -429,7 +435,11 @@ teacher_menu = {
     "menu_text": """Welcome, Teacher! Select what to do:
     • View Info
     • Update Info
-    • Write Report""",
+    • Write Report
+    • Update Report
+    • Delete Report
+    • View Remaining Reports
+    • Exit""",
     "view info": teacher_info,
     "update info": teacher_update_info,
     "view reports": teacher_view_reports,
@@ -437,14 +447,20 @@ teacher_menu = {
     "update report": teacher_update_report,
     "delete report": teacher_delete_report,
     "view remaining reports": teacher_remaining_reports,
-    "remaining reports": teacher_remaining_reports,
-    "exit": exit
+    "remaining reports": teacher_remaining_reports
 }
 
 ############# STUDENT MENUS #############
 
 student_menu = {
+    "menu_text": """Welcome, Student! Select what to do:
+    • View Info
+    • View Reports
+    • Exit""",
+    "view info": student_info,
+    "info": student_info,
     "view reports": student_view_reports,
+    "reports": student_view_reports
 }
 
 ############# MAIN MENU #############
