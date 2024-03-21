@@ -130,6 +130,8 @@ def teacher_view_reports():
     for item in reports:
         print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Student: {Student.find_by_id(item.student_id).name}")
         print(f"Report: {item.text}")
+    if reports == []:
+        print("No reports found")
 
 def teacher_write_report():
     teacher = select_obj(Teacher)
@@ -150,7 +152,15 @@ def teacher_write_report():
         print(f"Report created: {new_report}")
 
 def teacher_delete_report():
-    pass
+    teacher = select_obj(Teacher)
+    class_name = select_obj(Class_Name, teacher.get_classes())
+    student = select_obj(Student, class_name.get_students())
+    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    if report is not None:
+        report.delete()
+        print(f"Report deleted: {report}")
+    else:
+        print(f"Report not found: {report}")
 
 def teacher_remaining_reports():
     pass
