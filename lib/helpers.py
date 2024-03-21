@@ -6,6 +6,7 @@ from models.student import Student
 from models.student_class_name import Student_Class_Name
 from models.teacher_class_name import Teacher_Class_Name
 from models.class_name import Class_Name
+from text_editor_form import TextEditorApplication
 
 ### Admin actions ###
             
@@ -110,9 +111,6 @@ def add_obj(cls):
     print("********")
 
 ### Teacher actions ###
-    
-def write_report(teacher):
-    print(teacher)
 
 def teacher_info():
     print("Please select a teacher:")
@@ -129,7 +127,10 @@ def teacher_view_reports(teacher):
     print(teacher)
 
 def teacher_write_report():
-    pass
+    teacher = select_obj(Teacher)
+    class_name = select_obj(Class_Name, teacher.get_classes())
+    student = select_obj(Student, class_name.get_students())
+    print(student)
 
 def teacher_update_report():
     pass
@@ -222,8 +223,9 @@ def update_obj(cls, obj=None):
         if cls is Class_Name:
             pass
 
-def select_obj(cls):
-    obj_list = cls.get_all()
+def select_obj(cls, obj_list=[]):
+    if obj_list == []:
+        obj_list = cls.get_all()
     while True:
         print("********")
         print(f"List of {cls.__name__}s:")
@@ -443,7 +445,7 @@ teacher_menu = {
     "view info": teacher_info,
     "update info": teacher_update_info,
     "view reports": teacher_view_reports,
-    "write report": write_report,
+    "write report": teacher_write_report,
     "update report": teacher_update_report,
     "delete report": teacher_delete_report,
     "view remaining reports": teacher_remaining_reports,
