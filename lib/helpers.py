@@ -180,8 +180,14 @@ def teacher_remaining_reports():
 
 ### Student actions ###
 
-def student_view_reports(student):
-    print(student)
+def student_view_reports():
+    student = select_obj(Student)
+    reports = student.get_reports()
+    for item in reports:
+        print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Teacher: {Teacher.find_by_id(item.teacher_id).name}")
+        print(f"Report: {item.text}")
+    if reports == []:
+        print("No reports found")
 
 def student_info():
     print("Please select a student:")
@@ -374,8 +380,7 @@ def remove_objs(cls, obj):
 admin_teachers_info_menu = {
     "menu_text": """What info do you want to see?
     • List all teachers
-    • Search teachers
-    • Exit""",
+    • Search teachers""",
     "list all teachers": [list_all, Teacher, "teachers"],
     "list teachers": [list_all, Teacher, "teachers"],
     "list": [list_all, Teacher, "teachers"],
@@ -386,8 +391,7 @@ admin_teachers_info_menu = {
 admin_students_info_menu = {
     "menu_text": """What info do you want to see?
     • List all students
-    • Search students
-    • Exit""",
+    • Search students""",
     "list all students": [list_all, Student, "students"],
     "list students": [list_all, Student, "students"],
     "list": [list_all, Student, "students"],
@@ -398,8 +402,7 @@ admin_students_info_menu = {
 admin_classes_info_menu = {
     "menu_text": """What info do you want to see?
     • List all classes
-    • Search classes
-    • Exit""",
+    • Search classes""",
     "list all classes": [list_all, Class_Name, "class_names"],
     "list classes": [list_all, Class_Name, "class_names"],
     "list": [list_all, Class_Name, "class_names"],
@@ -411,8 +414,7 @@ admin_info_menu = {
     "menu_text": """Get info on what:
     • Teachers
     • Students
-    • Classes
-    • Exit""",
+    • Classes""",
     "teachers": admin_teachers_info_menu,
     "students": admin_students_info_menu,
     "classes": admin_classes_info_menu
@@ -422,8 +424,7 @@ admin_add_menu = {
     "menu_text": """Choose what to add:
     • Teacher
     • Student
-    • Class
-    • Exit""",
+    • Class""",
     "teacher": [add_obj, Teacher],
     "student": [add_obj, Student],
     "class": [add_obj, Class_Name]
@@ -433,8 +434,7 @@ admin_update_menu = {
     "menu_text": """Choose what to update:
     • Teacher
     • Student
-    • Class
-    • Exit""",
+    • Class""",
     "teacher": [update_obj, Teacher],
     "student": [update_obj, Student],
     "class": [update_obj, Class_Name]
@@ -444,8 +444,7 @@ admin_delete_menu = {
     "menu_text": """Choose what to delete:
     • Teacher
     • Student
-    • Class
-    • Exit""",
+    • Class""",
     "teacher": [delete_row, Teacher, "teachers"],
     "student": [delete_row, Student, "students"],
     "class": [delete_row, Class_Name, "class_names"]
@@ -456,8 +455,7 @@ admin_menu = {
     • Info (Teachers/Students/Classes)
     • Add (Teacher/Student/Class)
     • Update (Teacher/Student/Class)
-    • Delete (Teacher/Student/Class)
-    • Exit""",
+    • Delete (Teacher/Student/Class)""",
     "info": admin_info_menu,
     "teachers info": admin_teachers_info_menu,
     "students info": admin_students_info_menu,
@@ -485,8 +483,7 @@ teacher_menu = {
     • View Reports
     • Write or Update Report
     • Delete Report
-    • View Remaining Reports
-    • Exit""",
+    • View Remaining Reports""",
     "view info": teacher_info,
     "update info": teacher_update_info,
     "view reports": teacher_view_reports,
@@ -504,8 +501,7 @@ teacher_menu = {
 student_menu = {
     "menu_text": """Welcome, Student! Select what to do:
     • View Info
-    • View Reports
-    • Exit""",
+    • View Reports""",
     "view info": student_info,
     "info": student_info,
     "view reports": student_view_reports,

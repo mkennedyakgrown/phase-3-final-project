@@ -30,6 +30,7 @@ def seed_database():
     Teacher.create("Aubrey Miller")
     Teacher.create("Trevor Wilson")
     Teacher.create("Miles Davis")
+
     Student.create("John Smith")
     Student.create("Jane Smith")
     Student.create("John Doe")
@@ -38,6 +39,7 @@ def seed_database():
     Student.create("Sarah Davis")
     Student.create("Michael Thompson")
     Student.create("Emily Anderson")
+
     Class_Name.create("Ballet 4")
     Class_Name.create("Tap 5")
     Class_Name.create("Ballet Partnering")
@@ -56,6 +58,8 @@ def seed_database():
     Teacher_Class_Name.create(5, 5)
     Teacher_Class_Name.create(5, 6)
     Teacher_Class_Name.create(6, 6)
+    Teacher_Class_Name.create(7, 5)
+    Teacher_Class_Name.create(8, 4)
 
     Student_Class_Name.create(1, 1)
     Student_Class_Name.create(1, 2)
@@ -96,6 +100,13 @@ def seed_database():
     Student_Class_Name.create(8, 8)
 
     Report.create("Report 1", 1, 2, 2)
+    Report.create("Report for Tap 5, student Richard Johnson, teacher Felicia Jones", 2, 2, 5)
+    Report.create("Report for Ballet Partnering, student Jane Smith, teacher Todd Brown", 3, 2, 3)
+    Report.create("Report for Jazz/Lyrical 2, student Michael Thompson, teacher Aubrey Miller", 4, 4, 7)
+    Report.create("Report for Latin Rhythm/Ballroom, student John Doe, teacher Miles Davis", 5, 6, 3)
+    Report.create("Report for Hip Hop 8, student Michael Thompson, teacher Miles Davis", 6, 6, 7)
+    Report.create("Report for Adv. Clogging, student Sarah Davis, teacher Trevor Wilson", 7, 5, 6)
+    Report.create("Report for Pointe 1, student Jane Doe, teacher Aubrey Miller", 8, 4, 4)
 
 seed_database()
 print("Database seeded.")
