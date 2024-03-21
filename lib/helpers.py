@@ -111,6 +111,33 @@ def add_obj(cls):
             print("    * ", item)
     print("********")
 
+def search_reports_by_class():
+    print("Search reports by class")
+    class_name = select_obj(Class_Name)
+    student = select_obj(Student, class_name.get_students())
+    teacher = select_obj(Teacher, class_name.get_teachers())
+    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    if report:
+        print(report)
+    else:
+        print("No reports found")
+
+def admin_remaining_reports():
+    print("Remaining reports:")
+    classes = Class_Name.get_all()
+    for class_name in classes:
+        teachers = class_name.get_teachers()
+        students = class_name.get_students()
+        reports = Report.get_class_reports(class_name.id)
+        print(f"Class {class_name.name}:")
+        for teacher in teachers:
+            print(f"Teacher {teacher.name}:")
+            for student in students:
+                if student.id not in [report.student_id for report in reports]:
+                    print(f"    * {student.name}")
+        print("********")
+        
+
 ### Teacher actions ###
 
 def teacher_info():
@@ -131,6 +158,16 @@ def teacher_view_reports():
         print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Student: {Student.find_by_id(item.student_id).name}")
         print(f"Report: {item.text}")
     if reports == []:
+        print("No reports found")
+
+def teacher_search_reports():
+    teacher = select_obj(Teacher)
+    class_name = select_obj(Class_Name, teacher.get_classes())
+    student = select_obj(Student, class_name.get_students())
+    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    if report:
+        print(report)
+    else:
         print("No reports found")
 
 def teacher_write_report():
@@ -166,16 +203,13 @@ def teacher_remaining_reports():
     teacher = select_obj(Teacher)
     classes = teacher.get_classes()
     reports = teacher.get_reports()
-    remaining_reports = []
     for cls in classes:
-        class_reports = cls.get_reports()
         class_students = cls.get_students()
-        remaining_students = [student for student in class_students if student.id not in [report.student_id for report in reports]]
-        remaining_reports.append([cls, remaining_students])
-    for cls in remaining_reports:
-        print(f"{cls[0].name} Reports Remaining:")
-        for student in cls[1]:
-            print(f"    * {student.name}")
+        print(f"{cls.name} Reports Remaining:")
+        for student in class_students:
+            if student.id not in [report.student_id for report in reports]:
+                print(f"    * {student.name}")
+        print("********")
 
 
 ### Student actions ###
@@ -187,6 +221,16 @@ def student_view_reports():
         print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Teacher: {Teacher.find_by_id(item.teacher_id).name}")
         print(f"Report: {item.text}")
     if reports == []:
+        print("No reports found")
+
+def student_search_reports():
+    student = select_obj(Student)
+    class_name = select_obj(Class_Name, student.get_classes())
+    teacher = select_obj(Teacher, class_name.get_teachers())
+    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    if report:
+        print(report)
+    else:
         print("No reports found")
 
 def student_info():
@@ -409,15 +453,46 @@ admin_classes_info_menu = {
     "search classes": search_classes,
     "search": search_classes
 }
+
+admin_search_reports_menu = {
+    "menu_text": """How do you want to search reports?
+    • Search by Teacher
+    • Search by Class
+    • Search by Student""",
+    "search by teacher": teacher_search_reports,
+    "teacher": teacher_search_reports,
+    "search by class": search_reports_by_class,
+    "class": search_reports_by_class,
+    "search by student": student_search_reports,
+    "student": student_search_reports
+}
+
+admin_reports_info_menu = {
+    "menu_text": """What info do you want to see?
+    • List all reports
+    • Search reports
+    • View remaining reports""",
+    "list all reports": [list_all, Report, "reports"],
+    "list reports": [list_all, Report, "reports"],
+    "list": [list_all, Report, "reports"],
+    "search reports": admin_search_reports_menu,
+    "search": admin_search_reports_menu,
+    "view remaining reports": admin_remaining_reports,
+    "view remaining": admin_remaining_reports,
+    "remaining": admin_remaining_reports,
+    "remaining reports": admin_remaining_reports
+}
     
 admin_info_menu = {
     "menu_text": """Get info on what:
     • Teachers
     • Students
-    • Classes""",
+    • Classes
+    • Reports""",
     "teachers": admin_teachers_info_menu,
     "students": admin_students_info_menu,
-    "classes": admin_classes_info_menu
+    "classes": admin_classes_info_menu,
+    "reports": admin_reports_info_menu
 }
 
 admin_add_menu = {
@@ -452,7 +527,7 @@ admin_delete_menu = {
 
 admin_menu = {
     "menu_text": """Welcome, Admin! Select what to do:
-    • Info (Teachers/Students/Classes)
+    • Info (Teachers/Students/Classes/Reports)
     • Add (Teacher/Student/Class)
     • Update (Teacher/Student/Class)
     • Delete (Teacher/Student/Class)""",
@@ -460,6 +535,7 @@ admin_menu = {
     "teachers info": admin_teachers_info_menu,
     "students info": admin_students_info_menu,
     "classes info": admin_classes_info_menu,
+    "reports info": admin_reports_info_menu,
     "add": admin_add_menu,
     "add teacher": [add_obj, Teacher],
     "add student": [add_obj, Student],
