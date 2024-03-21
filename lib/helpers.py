@@ -124,26 +124,30 @@ def teacher_update_info():
     print("********")
     update_obj(Teacher, teacher)
 
-def teacher_view_reports(teacher):
-    print(teacher)
+def teacher_view_reports():
+    teacher = select_obj(Teacher)
+    reports = teacher.get_reports()
+    for item in reports:
+        print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Student: {Student.find_by_id(item.student_id).name}")
+        print(f"Report: {item.text}")
 
 def teacher_write_report():
     teacher = select_obj(Teacher)
     class_name = select_obj(Class_Name, teacher.get_classes())
     student = select_obj(Student, class_name.get_students())
     report = Report.find_by_ids(class_name.id, teacher.id, student.id)
-    if report:
+    if report is not None:
         TextEditorApplication.update_text(report.text)
+        TextEditorApplication().run()
+        report.text = TextEditorApplication.get_text()
+        report.update()
+        print(f"Report updated: {report}")
     else:
         TextEditorApplication.update_text("")
-    TextEditorApplication().run()
-    report = TextEditorApplication.get_text()
-    print(report)
-    new_report = Report.create(report, class_name.id, teacher.id, student.id)
-    print(new_report)
-
-def teacher_update_report():
-    pass
+        TextEditorApplication().run()
+        report = TextEditorApplication.get_text()
+        new_report = Report.create(report, class_name.id, teacher.id, student.id)
+        print(f"Report created: {new_report}")
 
 def teacher_delete_report():
     pass
