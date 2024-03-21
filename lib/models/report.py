@@ -1,5 +1,4 @@
 # lib/models/report.py
-import curses
 
 from models.__init__ import CONN, CURSOR
 
