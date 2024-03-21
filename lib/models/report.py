@@ -85,7 +85,9 @@ class Report:
             text TEXT NOT NULL,
             class_name_id INTEGER NOT NULL,
             teacher_id INTEGER NOT NULL,
-            student_id INTEGER NOT NULL"""
+            student_id INTEGER NOT NULL
+        );
+        """
         CURSOR.execute(sql)
         CONN.commit()
 

@@ -181,3 +181,11 @@ class Teacher:
             students.add(Student.instance_from_db([row.id, row.name]))
 
         return students
+    
+    def get_reports(self):
+        """ Return all the reports for the class. """
+        from models.report import Report
+
+        rows = Report.get_teacher_reports(self.id)
+        
+        return [Report.instance_from_db([row.id, row.text, row.class_name_id, row.teacher_id, row.student_id]) for row in rows]

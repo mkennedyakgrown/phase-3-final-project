@@ -160,7 +160,7 @@ class Class_Name:
             FROM class_names
             WHERE name = ?
         """
-        row = CURSOR.execute(sql, (name,)).fetchone()
+        row = CURSOR.execute(sql, (name.title(),)).fetchone()
 
         return cls.instance_from_db(row) if row else None
     
@@ -179,3 +179,11 @@ class Class_Name:
         student_rows = [Student.find_by_id(row.student_id) for row in student_class_name_rows]
 
         return [Student.instance_from_db([row.id, row.name]) for row in student_rows]
+    
+    def get_reports(self):
+        """ Return all the reports for the class. """
+        from models.report import Report
+
+        rows = Report.get_class_reports(self.id)
+        
+        return [Report.instance_from_db([row.id, row.text, row.class_name_id, row.teacher_id, row.student_id]) for row in rows]

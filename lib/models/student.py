@@ -173,3 +173,11 @@ class Student:
         rows = Teacher_Class_Name.find_by_class_name_id(classes)
 
         return [Teacher.instance_from_db(row[2]) for row in rows]
+    
+    def get_reports(self):
+        """ Return all the reports for the student. """
+        from models.report import Report
+
+        rows = Report.get_student_reports(self.id)
+        
+        return [Report.instance_from_db([row.id, row.text, row.class_name_id, row.teacher_id, row.student_id]) for row in rows]

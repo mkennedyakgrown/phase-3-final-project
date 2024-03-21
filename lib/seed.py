@@ -6,6 +6,7 @@ from models.student import Student
 from models.class_name import Class_Name
 from models.teacher_class_name import Teacher_Class_Name
 from models.student_class_name import Student_Class_Name
+from models.report import Report
 
 def seed_database():
     Teacher.drop_table()
@@ -13,11 +14,14 @@ def seed_database():
     Class_Name.drop_table()
     Teacher_Class_Name.drop_table()
     Student_Class_Name.drop_table()
+    Report.drop_table()
+
     Teacher.create_table()
     Student.create_table()
     Class_Name.create_table()
     Teacher_Class_Name.create_table()
     Student_Class_Name.create_table()
+    Report.create_table()
 
     # Create seed data
     Teacher.create("Jerry Smith")
@@ -91,8 +95,7 @@ def seed_database():
     Student_Class_Name.create(8, 7)
     Student_Class_Name.create(8, 8)
 
-    
-    
+    Report.create("Report 1", 1, 2, 2)
 
 seed_database()
 print("Database seeded.")
