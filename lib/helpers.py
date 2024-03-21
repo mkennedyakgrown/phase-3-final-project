@@ -6,6 +6,7 @@ from models.student import Student
 from models.student_class_name import Student_Class_Name
 from models.teacher_class_name import Teacher_Class_Name
 from models.class_name import Class_Name
+from models.report import Report
 from text_editor_form import TextEditorApplication
 
 ### Admin actions ###
@@ -130,7 +131,16 @@ def teacher_write_report():
     teacher = select_obj(Teacher)
     class_name = select_obj(Class_Name, teacher.get_classes())
     student = select_obj(Student, class_name.get_students())
-    print(student)
+    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    if report:
+        TextEditorApplication.update_text(report.text)
+    else:
+        TextEditorApplication.update_text("")
+    TextEditorApplication().run()
+    report = TextEditorApplication.get_text()
+    print(report)
+    new_report = Report.create(report, class_name.id, teacher.id, student.id)
+    print(new_report)
 
 def teacher_update_report():
     pass
@@ -437,8 +447,7 @@ teacher_menu = {
     "menu_text": """Welcome, Teacher! Select what to do:
     • View Info
     • Update Info
-    • Write Report
-    • Update Report
+    • Write or Update Report
     • Delete Report
     • View Remaining Reports
     • Exit""",
@@ -446,7 +455,8 @@ teacher_menu = {
     "update info": teacher_update_info,
     "view reports": teacher_view_reports,
     "write report": teacher_write_report,
-    "update report": teacher_update_report,
+    "write": teacher_write_report,
+    "update report": teacher_write_report,
     "delete report": teacher_delete_report,
     "view remaining reports": teacher_remaining_reports,
     "remaining reports": teacher_remaining_reports

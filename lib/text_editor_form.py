@@ -43,6 +43,19 @@ class Text_Editor_Form(npyscreen.Form):
 class TextEditorApplication(npyscreen.NPSAppManaged):
     def onStart(self):
         self.addForm("MAIN", Text_Editor_Form, name="Text Editor")
+
+    def initialize_text():
+        sql = """
+            DROP TABLE IF EXISTS text_data;
+            CREATE TABLE text_data (
+                id INTEGER PRIMARY KEY,
+                text TEXT
+            );
+            INSERT INTO text_data (text)
+            VALUES ('')
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
     
     def update_text(text):
         sql = """

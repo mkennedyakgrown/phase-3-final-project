@@ -26,11 +26,11 @@ class Report:
     
     @text.setter
     def text(self, text):
-        if isinstance(text, str) and len(text) > 0:
+        if isinstance(text, str):
             self._text = text
         else:
             raise ValueError(
-                "Text must be a non-empty string."
+                "Text must be aa string."
             )
     
     @property
