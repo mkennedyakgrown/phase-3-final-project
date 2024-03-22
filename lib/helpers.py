@@ -119,49 +119,37 @@ def add_obj(cls):
             print("    * ", item)
     print("********")
 
-def search_reports_by_class():
-    print("Search reports by class")
-    class_name = select_obj(Class_Name)
-    if class_name is None:
-        return
-    student = select_obj(Student, class_name.get_students())
-    if student is None:
-        return
-    teacher = select_obj(Teacher, class_name.get_teachers())
-    if teacher is None:
-        return
-    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
-    if report:
-        print(report)
-    else:
-        print("No reports found")
-
-def search_reports_by_teacher():
-    teacher = select_obj(Teacher)
-    if teacher is None:
-        return
-    class_name = select_obj(Class_Name, teacher.get_classes())
-    if class_name is None:
-        return
-    student = select_obj(Student, class_name.get_students())
-    if student is None:
-        return
-    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
-    if report:
-        print(report)
-    else:
-        print("No reports found")
-
-def search_reports_by_student():
-    student = select_obj(Student)
-    if student is None:
-        return
-    class_name = select_obj(Class_Name, student.get_classes())
-    if class_name is None:
-        return
-    teacher = select_obj(Teacher, class_name.get_teachers())
-    if teacher is None:
-        return
+def admin_search_reports(cls):
+    if cls is Class_Name:
+        class_name = select_obj(cls)
+        if class_name is None:
+            return
+        teacher = select_obj(Teacher, class_name.get_teachers())
+        if teacher is None:
+            return
+        student = select_obj(Student, class_name.get_students())
+        if student is None:
+            return
+    elif cls is Teacher:
+        teacher = select_obj(cls)
+        if teacher is None:
+            return
+        class_name = select_obj(Class_Name, teacher.get_classes())
+        if class_name is None:
+            return
+        student = select_obj(Student, class_name.get_students())
+        if student is None:
+            return
+    elif cls is Student:
+        student = select_obj(cls)
+        if student is None:
+            return
+        class_name = select_obj(Class_Name, student.get_classes())
+        if class_name is None:
+            return
+        teacher = select_obj(Teacher, class_name.get_teachers())
+        if teacher is None:
+            return
     report = Report.find_by_ids(class_name.id, teacher.id, student.id)
     if report:
         print(report)
@@ -516,12 +504,12 @@ admin_search_reports_menu = {
     • Search by Teacher
     • Search by Class
     • Search by Student""",
-    "search by teacher": search_reports_by_teacher,
-    "teacher": search_reports_by_teacher,
-    "search by class": search_reports_by_class,
-    "class": search_reports_by_class,
-    "search by student": search_reports_by_student,
-    "student": search_reports_by_student
+    "search by teacher": [admin_search_reports, Teacher],
+    "teacher": [admin_search_reports, Teacher],
+    "search by class": [admin_search_reports, Class_Name],
+    "class": [admin_search_reports, Class_Name],
+    "search by student": [admin_search_reports, Student],
+    "student": [admin_search_reports, Student]
 }
 
 admin_reports_info_menu = {
