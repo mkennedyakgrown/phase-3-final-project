@@ -6,8 +6,6 @@ import npyscreen
 
 class Text_Editor_Form(npyscreen.Form):
 
-    all = {}
-
     def create(self):
         text = self.get_text()
         self.add(npyscreen.MultiLineEdit, name="Enter Text:", max_height=20, max_width=100, value=text, editable=True, scroll_exit=True, wrap=True, begin_entry_at=-1)
@@ -30,7 +28,6 @@ class Text_Editor_Form(npyscreen.Form):
     def on_save(self, key=0):
         self.set_value(self.get_widget(0).value)
         TextEditorApplication.update_text(self.value)
-        type(self).all[1] = self.value
     
     def on_exit(self):
         self.on_save(0)
