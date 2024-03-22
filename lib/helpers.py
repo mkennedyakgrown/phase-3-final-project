@@ -14,7 +14,9 @@ from text_editor_form import TextEditorApplication
 def search_teachers(name=""):
     print("Search teachers:")
     if name == "":
-        name = input("Enter name:")
+        name = input("Enter name (blank to exit):")
+    if name == "":
+        return
     teacher = Teacher.find_by_name(name.title())
     if teacher:
         classes = teacher.get_classes()
@@ -23,10 +25,10 @@ def search_teachers(name=""):
         print(teacher)
         print("Classes:")
         for item in classes:
-            print(item)
+            print(f"    * {item.name}")
         print("Students:")
         for item in students:
-            print(item)
+            print(f"    * {item.name}")
         print("********")
     else:
         print("********")
@@ -34,9 +36,11 @@ def search_teachers(name=""):
         print("********")
 
 def search_students(name=""):
-    print("Search students:")
+    print("Search students (blank to exit):")
     if name == "":
         name = input("Enter name:").capitalize()
+    if name == "":
+        return
     student = Student.find_by_name(name.title())
     if student:
         classes = student.get_classes()
@@ -44,7 +48,7 @@ def search_students(name=""):
         print(student)
         print("Classes:")
         for item in classes:
-            print(item)
+            print(f"    * {item.name}")
         print("********")
     else:
         print("********")
@@ -53,18 +57,20 @@ def search_students(name=""):
 
 def search_classes():
     print("Search classes")
-    name = input("Enter name:").capitalize()
+    name = input("Enter name (blank to exit):").capitalize()
+    if name == "":
+        return
     class_name = Class_Name.find_by_name(name.title())
     if class_name:
         teachers = class_name.get_teachers()
         print("********")
         print("Teacher(s):")
         for item in teachers:
-            print(item)
+            print(f"    * {item.name}")
         students = class_name.get_students()
         print("Student(s):")
         for item in students:
-            print(item)
+            print(f"    * {item.name}")
         print("********")
     else:
         print("********")
@@ -75,6 +81,8 @@ def add_obj(cls):
     print(f"Add {cls.__name__}:")
     print("********")
     name = select_name(cls)
+    if name == "":
+        return
     obj = cls(name.title())
     obj.save()
     if cls is Teacher or cls is Student:
@@ -114,8 +122,46 @@ def add_obj(cls):
 def search_reports_by_class():
     print("Search reports by class")
     class_name = select_obj(Class_Name)
+    if class_name is None:
+        return
     student = select_obj(Student, class_name.get_students())
+    if student is None:
+        return
     teacher = select_obj(Teacher, class_name.get_teachers())
+    if teacher is None:
+        return
+    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    if report:
+        print(report)
+    else:
+        print("No reports found")
+
+def search_reports_by_teacher():
+    teacher = select_obj(Teacher)
+    if teacher is None:
+        return
+    class_name = select_obj(Class_Name, teacher.get_classes())
+    if class_name is None:
+        return
+    student = select_obj(Student, class_name.get_students())
+    if student is None:
+        return
+    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    if report:
+        print(report)
+    else:
+        print("No reports found")
+
+def search_reports_by_student():
+    student = select_obj(Student)
+    if student is None:
+        return
+    class_name = select_obj(Class_Name, student.get_classes())
+    if class_name is None:
+        return
+    teacher = select_obj(Teacher, class_name.get_teachers())
+    if teacher is None:
+        return
     report = Report.find_by_ids(class_name.id, teacher.id, student.id)
     if report:
         print(report)
@@ -143,16 +189,22 @@ def admin_remaining_reports():
 def teacher_info():
     print("Please select a teacher:")
     teacher = select_obj(Teacher)
+    if teacher is None:
+        return
     search_teachers(teacher.name)
 
 def teacher_update_info():
     print("Please select a teacher:")
     teacher = select_obj(Teacher)
+    if teacher is None:
+        return
     print("********")
     update_obj(Teacher, teacher)
 
 def teacher_view_reports():
     teacher = select_obj(Teacher)
+    if teacher is None:
+        return
     reports = teacher.get_reports()
     for item in reports:
         print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Student: {Student.find_by_id(item.student_id).name}")
@@ -160,20 +212,16 @@ def teacher_view_reports():
     if reports == []:
         print("No reports found")
 
-def teacher_search_reports():
-    teacher = select_obj(Teacher)
-    class_name = select_obj(Class_Name, teacher.get_classes())
-    student = select_obj(Student, class_name.get_students())
-    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
-    if report:
-        print(report)
-    else:
-        print("No reports found")
-
 def teacher_write_report():
     teacher = select_obj(Teacher)
+    if teacher is None:
+        return
     class_name = select_obj(Class_Name, teacher.get_classes())
+    if class_name is None:
+        return
     student = select_obj(Student, class_name.get_students())
+    if student is None:
+        return
     report = Report.find_by_ids(class_name.id, teacher.id, student.id)
     if report is not None:
         TextEditorApplication.update_text(report.text)
@@ -190,8 +238,14 @@ def teacher_write_report():
 
 def teacher_delete_report():
     teacher = select_obj(Teacher)
+    if teacher is None:
+        return
     class_name = select_obj(Class_Name, teacher.get_classes())
+    if class_name is None:
+        return
     student = select_obj(Student, class_name.get_students())
+    if student is None:
+        return
     report = Report.find_by_ids(class_name.id, teacher.id, student.id)
     if report is not None:
         report.delete()
@@ -201,6 +255,8 @@ def teacher_delete_report():
 
 def teacher_remaining_reports():
     teacher = select_obj(Teacher)
+    if teacher is None:
+        return
     classes = teacher.get_classes()
     reports = teacher.get_reports()
     for cls in classes:
@@ -216,6 +272,8 @@ def teacher_remaining_reports():
 
 def student_view_reports():
     student = select_obj(Student)
+    if student is None:
+        return
     reports = student.get_reports()
     for item in reports:
         print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Teacher: {Teacher.find_by_id(item.teacher_id).name}")
@@ -223,19 +281,11 @@ def student_view_reports():
     if reports == []:
         print("No reports found")
 
-def student_search_reports():
-    student = select_obj(Student)
-    class_name = select_obj(Class_Name, student.get_classes())
-    teacher = select_obj(Teacher, class_name.get_teachers())
-    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
-    if report:
-        print(report)
-    else:
-        print("No reports found")
-
 def student_info():
     print("Please select a student:")
     student = select_obj(Student)
+    if student is None:
+        return
     search_students(student.name)
 
 ### Reuseable actions ###
@@ -254,7 +304,9 @@ def delete_row(cls, row):
     for item in obj_list:
         print(item)
     print("********")
-    name = input(f"Enter {cls.__name__} name to delete:")
+    name = input(f"Enter {cls.__name__} name to delete (or blank to exit):")
+    if name == "":
+        return
     obj = cls.find_by_name(name.title())
     if obj:
         obj.delete()
@@ -265,7 +317,7 @@ def delete_row(cls, row):
 
 def select_name(cls):
     while True:
-        name = input(f"Enter {cls.__name__} name:")
+        name = input(f"Enter {cls.__name__} name (blank to exit):")
         if cls.find_by_name(name.title()):
             print(f"{cls.__name__} {name} already exists")
             name = ""
@@ -273,7 +325,7 @@ def select_name(cls):
             print("Exiting...")
             exit()
         elif name == "":
-            print("Name cannot be blank")
+            break
         else:
             break
     return name
@@ -289,6 +341,8 @@ def update_obj(cls, obj=None):
     if obj is None:
         print("********")
         obj = select_obj(cls)
+        if obj is None:
+            return
     print("********")
     print(f"Updating {obj.name}")
     while True:
@@ -319,8 +373,11 @@ def select_obj(cls, obj_list=[]):
         for item in obj_list:
             print(item.name)
         print("********")
-        name = input("Enter name to select:")
-        if name:
+        name = input("Enter name to select (blank to exit):")
+        if name == "":
+            obj = None
+            break
+        elif name:
             obj = cls.find_by_name(name.title())
             if obj:
                 break
@@ -459,12 +516,12 @@ admin_search_reports_menu = {
     • Search by Teacher
     • Search by Class
     • Search by Student""",
-    "search by teacher": teacher_search_reports,
-    "teacher": teacher_search_reports,
+    "search by teacher": search_reports_by_teacher,
+    "teacher": search_reports_by_teacher,
     "search by class": search_reports_by_class,
     "class": search_reports_by_class,
-    "search by student": student_search_reports,
-    "student": student_search_reports
+    "search by student": search_reports_by_student,
+    "student": search_reports_by_student
 }
 
 admin_reports_info_menu = {
