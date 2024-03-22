@@ -212,8 +212,11 @@ def teacher_write_report():
         return
     report = Report.find_by_ids(class_name.id, teacher.id, student.id)
     if report is not None:
+        TextEditorApplication.initialize_text(report.text)
         TextEditorApplication.update_text(report.text)
-        TextEditorApplication().run()
+        new_text_editor = TextEditorApplication()
+        new_text_editor.run()
+        del new_text_editor
         report.text = TextEditorApplication.get_text()
         report.update()
         print(f"Report updated: {report}")
