@@ -111,17 +111,13 @@ Welcome, Student! Select what to do:
 
 The only place the UI experience is especially different is the Teacher's Write and Update Reports text editor.
 
-![alt text](lib/img/TextEditorTyping-ezgif.com-video-to-gif-converter.gif)
+![alt text](lib/img/TextEditorTyping.gif)
 
-Entering the Write or Update Report function will prompt choices for first a Teacher, then a Class, and then a Student. After selecting the Student about whom the report will be written, you will be taken to a Text Editor window. Simply type your report in that window, including any line breaks, and use your keyboard's arrow keys to navigate through your text, as well as to select the `Save` and `Exit` buttons
+Entering the Write or Update Report function will prompt choices for first a Teacher, then a Class, and then a Student. After selecting the Student about whom the report will be written, you will be taken to a Text Editor window. Simply type your report in that window, including any line breaks, and use your keyboard's arrow keys to navigate through your text.
 
-The `Save` button will save your text to the database.
+Type Ctrl+A to Save and Quit. This will save your new or updated report to the database, and then exit to the previous menu.
 
-![alt text](lib/img/TextEditorSaving-ezgif.com-video-to-gif-converter.gif)
-
-The `Exit` button will do a final save of your report, and then exit the Text Editor window, returning you to the Teacher Menu.
-
-![alt text](lib/img/TextEditorExit-ezgif.com-video-to-gif-converter.gif)
+Type Ctrl+B to Cancel. This will disregard any changes that you've made to the report, and then exit to the previous menu. If creating a new report, it will save as an empty string.
 
 ## License
 

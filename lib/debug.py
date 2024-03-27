@@ -15,7 +15,6 @@ def debug():
     from models.student_class_name import Student_Class_Name
     from models.teacher_class_name import Teacher_Class_Name
     from models.report import Report
-    from text_editor_form import TextEditorApplication
 
     # sql = """DELETE FROM teacher_class_names
     # WHERE teacher_id > 10
@@ -36,13 +35,6 @@ def debug():
     classes = Student.get_classes(obj)
     for cls in classes:
         print(cls)
-    report_text = Report.find_by_ids(obj.id, 2, 2).text
-    TextEditorApplication.update_text(report_text)
-    TextEditorApplication().run()
-    report = TextEditorApplication.get_text()
-    print(report)
-    new_report = Report.create(report, obj.id, 2, 3)
-    print(new_report)
 
     # for cls in classes:
     #     print(cls.name)
