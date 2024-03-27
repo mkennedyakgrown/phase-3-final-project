@@ -7,7 +7,6 @@ from models.student_class_name import Student_Class_Name
 from models.teacher_class_name import Teacher_Class_Name
 from models.class_name import Class_Name
 from models.report import Report
-from text_editor_form import TextEditorApplication
 
 ### Admin actions ###
             
