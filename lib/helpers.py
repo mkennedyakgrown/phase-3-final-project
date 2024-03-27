@@ -201,6 +201,7 @@ def teacher_view_reports():
         print("No reports found")
 
 def teacher_write_report():
+    from curses_text_editor import enter_text_editor
     teacher = select_obj(Teacher)
     if teacher is None:
         return

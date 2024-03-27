@@ -105,6 +105,40 @@ def get_text():
     return text[0]
 
 def load_buffer(text):
+    sql = """
+        SELECT text
+        FROM text_data
+        WHERE id = 2
+    """
+    text = CURSOR.execute(sql).fetchone()[0]
     return text.split("\n")
 
-curses.wrapper(main)
+def initialize_text(text):
+        sql = """
+            DROP TABLE IF EXISTS text_data;
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+        sql = """
+            CREATE TABLE text_data (
+                id INTEGER PRIMARY KEY,
+                text TEXT
+            )
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+        sql = """
+            INSERT INTO text_data (text)
+            VALUES ('')
+        """
+        CURSOR.execute(sql)
+        CONN.commit()
+        sql = """
+            INSERT INTO text_data (text)
+            VALUES (?)
+        """
+        CURSOR.execute(sql, (text,))
+        CONN.commit()
+
+def enter_text_editor():
+    curses.wrapper(main)
