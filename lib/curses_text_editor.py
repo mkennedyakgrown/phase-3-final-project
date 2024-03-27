@@ -140,5 +140,6 @@ def initialize_text(text):
         CURSOR.execute(sql, (text,))
         CONN.commit()
 
-def enter_text_editor():
+def enter_text_editor(text = ""):
+    initialize_text(text)
     curses.wrapper(main)

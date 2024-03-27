@@ -30,7 +30,7 @@ class Report:
             self._text = text
         else:
             raise ValueError(
-                "Text must be aa string."
+                "Text must be a string."
             )
     
     @property

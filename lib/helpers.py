@@ -201,7 +201,7 @@ def teacher_view_reports():
         print("No reports found")
 
 def teacher_write_report():
-    from curses_text_editor import enter_text_editor
+    from curses_text_editor import enter_text_editor, get_text
     teacher = select_obj(Teacher)
     if teacher is None:
         return
@@ -213,18 +213,13 @@ def teacher_write_report():
         return
     report = Report.find_by_ids(class_name.id, teacher.id, student.id)
     if report is not None:
-        TextEditorApplication.initialize_text(report.text)
-        TextEditorApplication.update_text(report.text)
-        new_text_editor = TextEditorApplication()
-        new_text_editor.run()
-        del new_text_editor
-        report.text = TextEditorApplication.get_text()
+        enter_text_editor(report.text)
+        report.text = get_text()
         report.update()
         print(f"Report updated: {report}")
     else:
-        TextEditorApplication.update_text("")
-        TextEditorApplication().run()
-        report = TextEditorApplication.get_text()
+        enter_text_editor()
+        report = get_text()
         new_report = Report.create(report, class_name.id, teacher.id, student.id)
         print(f"Report created: {new_report}")
 
@@ -267,11 +262,13 @@ def student_view_reports():
     if student is None:
         return
     reports = student.get_reports()
+    print("********")
     for item in reports:
         print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Teacher: {Teacher.find_by_id(item.teacher_id).name}")
         print(f"Report: {item.text}")
     if reports == []:
         print("No reports found")
+    print("********")
 
 def student_info():
     print("Please select a student:")
@@ -353,8 +350,27 @@ def update_obj(cls, obj=None):
                 remove_objs(Class_Name, obj)
             elif choice == "exit":
                 break
-        if cls is Class_Name:
-            pass
+        else:
+            print("""What do you want to update?:
+    • Name
+    • Add Teachers
+    • Remove Teachers
+    • Add Students
+    • Remove Students
+    • Exit""")
+            choice = input("Select:").lower()
+            if choice == "name":
+                update_name(obj)
+            elif choice == "add teachers":
+                add_objs(Teacher, obj)
+            elif choice == "remove teachers":
+                remove_objs(Teacher, obj)
+            elif choice == "add students":
+                add_objs(Student, obj)
+            elif choice == "remove students":
+                remove_objs(Student, obj)
+            elif choice == "exit":
+                break
 
 def select_obj(cls, obj_list=[]):
     if obj_list == []:
@@ -447,7 +463,7 @@ def remove_objs(cls, obj):
         name = input(f"Enter {cls.__name__.lower()} name to REMOVE (or blank to stop):")
         if name:
             new_obj = cls.find_by_name(name.title())
-            if new_obj:
+            if new_obj is not None:
                 curr_objs.discard(new_obj)
                 remove_objs_set.add(new_obj)
             else:
@@ -463,8 +479,10 @@ def remove_objs(cls, obj):
             Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, obj.id).delete()
     if type(obj) is Class_Name:
         for item in remove_objs_set:
-            Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id).delete()
-            Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id).delete()
+            if cls is Student:
+                Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id).delete()
+            elif cls is Teacher:
+                Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id).delete()
 
     return
 
