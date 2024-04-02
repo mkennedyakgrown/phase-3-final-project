@@ -7,10 +7,9 @@ class Report:
     # Dictionary of objects saved to the database.
     all = {}
 
-    def __init__(self, text, class_name_id, teacher_id, student_id, id=None):
+    def __init__(self, text, class_name_id, student_id, id=None):
         self.text = text
         self.class_name_id = class_name_id
-        self.teacher_id = teacher_id
         self.student_id = student_id
         self.id = id
 
@@ -46,20 +45,6 @@ class Report:
             raise ValueError(
                 "Class not found."
             )
-    
-    @property
-    def teacher_id(self):
-        return self._teacher_id
-    
-    @teacher_id.setter
-    def teacher_id(self, teacher_id):
-        from models.teacher import Teacher
-        if isinstance(teacher_id, int) and Teacher.find_by_id(teacher_id):
-            self._teacher_id = teacher_id
-        else:
-            raise ValueError(
-                "Teacher not found."
-            )
         
     @property
     def student_id(self):
@@ -83,7 +68,6 @@ class Report:
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             text TEXT NOT NULL,
             class_name_id INTEGER NOT NULL,
-            teacher_id INTEGER NOT NULL,
             student_id INTEGER NOT NULL
         );
         """
@@ -104,9 +88,9 @@ class Report:
 
         sql = """
             INSERT INTO reports (text, class_name_id, teacher_id, student_id)
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, ?)
         """
-        CURSOR.execute(sql, (self.text, self.class_name_id, self.teacher_id, self.student_id))
+        CURSOR.execute(sql, (self.text, self.class_name_id, self.student_id))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
@@ -117,10 +101,10 @@ class Report:
 
         sql = """
             UPDATE reports
-            SET text = ?, class_name_id = ?, teacher_id = ?, student_id = ?
+            SET text = ?, class_name_id = ?, student_id = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.text, self.class_name_id, self.teacher_id, self.student_id, self.id))
+        CURSOR.execute(sql, (self.text, self.class_name_id, self.student_id, self.id))
         CONN.commit()
 
     def delete(self):
@@ -138,10 +122,10 @@ class Report:
         self.id = None
     
     @classmethod
-    def create(cls, text, class_name_id, teacher_id, student_id):
+    def create(cls, text, class_name_id, student_id):
         """ Create a new report instance and save it to the database. """
         
-        report = cls(text, class_name_id, teacher_id, student_id)
+        report = cls(text, class_name_id, student_id)
         report.save()
         return report
     
@@ -153,10 +137,9 @@ class Report:
         if report:
             report.text = row[1]
             report.class_name_id = row[2]
-            report.teacher_id = row[3]
-            report.student_id = row[4]
+            report.student_id = row[3]
         else:
-            report = cls(row[1], row[2], row[3], row[4])
+            report = cls(row[1], row[2], row[3])
             report.id = row[0]
             cls.all[report.id] = report
         return report
@@ -189,15 +172,15 @@ class Report:
         return cls.instance_from_db(row) if row else None
     
     @classmethod
-    def find_by_ids(cls, class_name_id, teacher_id, student_id):
-        """ Return the report with the given class_name_id, teacher_id, and student_id. """
+    def find_by_ids(cls, class_name_id, student_id):
+        """ Return the report with the given class_name_id, and student_id. """
         
         sql = """
             SELECT *
             FROM reports
-            WHERE class_name_id = ? AND teacher_id = ? AND student_id = ?
+            WHERE class_name_id = ? AND student_id = ?
         """
-        CURSOR.execute(sql, (class_name_id, teacher_id, student_id))
+        CURSOR.execute(sql, (class_name_id, student_id))
         row = CURSOR.fetchone()
 
         return cls.instance_from_db(row) if row else None
@@ -219,14 +202,16 @@ class Report:
     @classmethod
     def get_teacher_reports(cls, teacher_id):
         """ Return all the reports for the given teacher_id. """
+        from teacher import get_classes
+
+        class_name_ids = [class_name_id for class_name_id in get_classes(teacher_id)]
         
         sql = """
             SELECT *
             FROM reports
-            WHERE teacher_id = ?
+            WHERE class_name_id = ?
         """
-        CURSOR.execute(sql, (teacher_id,))
-        rows = CURSOR.fetchall()
+        rows = [CURSOR.execute(sql, (class_name_id,)).fetchall() for class_name_id in class_name_ids]
 
         return [cls.instance_from_db(row) for row in rows]
     

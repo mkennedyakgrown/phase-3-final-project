@@ -3,15 +3,15 @@ from models.__init__ import CONN, CURSOR
 from models.teacher import Teacher
 from models.student import Student
 from models.student_class_name import Student_Class_Name
-from models.teacher_class_name import Teacher_Class_Name
 
 class Class_Name:
 
     # Dictionary of objects saved to the database.
     all = {}
 
-    def __init__(self, name, id=None):
+    def __init__(self, name, teacher_id=0, id=None):
         self.name = name
+        self.teacher_id = teacher_id
         self.id = id
 
     def __repr__(self):
@@ -32,13 +32,27 @@ class Class_Name:
                 "Name must be a non-empty string."
             )
         
+    @property
+    def teacher_id(self):
+        return self._teacher_id
+    
+    @teacher_id.setter
+    def teacher_id(self, teacher_id):
+        if isinstance(teacher_id, int) and Teacher.find_by_id(teacher_id) is not None:
+            self._teacher_id = teacher_id
+        else:
+            raise ValueError(
+                "Teacher ID must be a positive integer."
+            )
+        
     @classmethod
     def create_table(cls):
         """ Create a new table to persist the attributes of Class_Name instances in the database. """
         sql = """
             CREATE TABLE IF NOT EXISTS class_names (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL UNIQUE
+            name TEXT NOT NULL UNIQUE,
+            teacher_id INTEGER
         );
         """
         CURSOR.execute(sql)
@@ -60,7 +74,7 @@ class Class_Name:
             INSERT INTO class_names (name)
             VALUES (?)
         """
-        CURSOR.execute(sql, (self.name,))
+        CURSOR.execute(sql, (self.name, self.teacher_id,))
         CONN.commit()
 
         self.id = CURSOR.lastrowid
@@ -71,7 +85,7 @@ class Class_Name:
 
         sql = """
             UPDATE class_names
-            SET name = ?
+            SET name = ?, teacher_id = ?
             WHERE id = ?
         """
         CURSOR.execute(sql, (self.name, self.id))
@@ -94,22 +108,15 @@ class Class_Name:
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
-        sql = """
-            DELETE FROM teacher_class_names
-            WHERE class_name_id = ?"""
-
-        CURSOR.execute(sql, (self.id,))
-        CONN.commit()
-
         del type(self).all[self.id]
 
         self.id = None
 
     @classmethod
-    def create(cls, name):
+    def create(cls, name, teacher_id=0):
         """ Create a new class_name instance and save it to the database. """
 
-        class_name = cls(name)
+        class_name = cls(name, teacher_id)
         class_name.save()
         return class_name
     
@@ -122,9 +129,10 @@ class Class_Name:
             class_name.name = row[1]
         else:
             class_name = cls(row[1])
+            teacher_id = cls(row[2])
             class_name.id = row[0]
-            cls.all[class_name.id] = class_name
-        return class_name
+            cls.all[class_name.id] = [class_name, teacher_id]
+        return [class_name, teacher_id]
     
     @classmethod
     def get_all(cls):
@@ -164,13 +172,10 @@ class Class_Name:
 
         return cls.instance_from_db(row) if row else None
     
-    def get_teachers(self):
-        """ Return all the teachers for the class. """
+    def get_teacher(self):
+        """ Return  the teacher for the class. """
 
-        teacher_class_name_rows = Teacher_Class_Name.find_by_class_name_id(self.id)
-        teacher_rows = [Teacher.find_by_id(row.teacher_id) for row in teacher_class_name_rows]
-
-        return [Teacher.instance_from_db([row.id, row.name]) for row in teacher_rows]
+        return Teacher.find_by_id(self.teacher_id)
     
     def get_students(self):
         """ Return all the students for the class. """
@@ -186,4 +191,4 @@ class Class_Name:
 
         rows = Report.get_class_reports(self.id)
         
-        return [Report.instance_from_db([row.id, row.text, row.class_name_id, row.teacher_id, row.student_id]) for row in rows]
+        return [Report.instance_from_db([row.id, row.text, row.class_name_id, row.student_id]) for row in rows]

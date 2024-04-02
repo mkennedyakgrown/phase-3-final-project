@@ -1,7 +1,11 @@
-# lib/models/teacher.py
+# lib/models/class_name.py
 from models.__init__ import CONN, CURSOR
+from models.teacher import Teacher
+from models.student import Student
+from models.student_class_name import Student_Class_Name
+from models.teacher_class_name import Teacher_Class_Name
 
-class Teacher:
+class Class_Name:
 
     # Dictionary of objects saved to the database.
     all = {}
@@ -12,7 +16,7 @@ class Teacher:
 
     def __repr__(self):
         return (
-            f"Teacher {self.id}: {self.name}"
+            f"Class Name {self.id}: {self.name}"
         )
     
     @property
@@ -30,9 +34,9 @@ class Teacher:
         
     @classmethod
     def create_table(cls):
-        """ Create a new table to persist the attributes of Teacher instances in the database. """
+        """ Create a new table to persist the attributes of Class_Name instances in the database. """
         sql = """
-            CREATE TABLE IF NOT EXISTS teachers (
+            CREATE TABLE IF NOT EXISTS class_names (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL UNIQUE
         );
@@ -42,18 +46,18 @@ class Teacher:
     
     @classmethod
     def drop_table(cls):
-        """ Drop the table used to persist the attributes of Teacher instances in the database. """
+        """ Drop the table used to persist the attributes of Class_Name instances in the database. """
         sql = """
-            DROP TABLE IF EXISTS teachers
+            DROP TABLE IF EXISTS class_names
         """
         CURSOR.execute(sql)
         CONN.commit()
 
     def save(self):
-        """ Save the teacher to the database. """
+        """ Save the class_name to the database. """
 
         sql = """
-            INSERT INTO teachers (name)
+            INSERT INTO class_names (name)
             VALUES (?)
         """
         CURSOR.execute(sql, (self.name,))
@@ -63,10 +67,10 @@ class Teacher:
         type(self).all[self.id] = self
 
     def update(self):
-        """ Update the name of the teacher in the database. """
+        """ Update the name of the class_name in the database. """
 
         sql = """
-            UPDATE teachers
+            UPDATE class_names
             SET name = ?
             WHERE id = ?
         """
@@ -74,19 +78,26 @@ class Teacher:
         CONN.commit()
 
     def delete(self):
-        """ Delete the teacher from the database. """
+        """ Delete the class_name from the database. """
 
         sql = """
-            DELETE FROM teachers
+            DELETE FROM class_names
             WHERE id = ?
         """
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
         sql = """
+            DELETE FROM student_class_names
+            WHERE class_name_id = ?"""
+
+        CURSOR.execute(sql, (self.id,))
+        CONN.commit()
+
+        sql = """
             DELETE FROM teacher_class_names
-            WHERE teacher_id = ?
-        """
+            WHERE class_name_id = ?"""
+
         CURSOR.execute(sql, (self.id,))
         CONN.commit()
 
@@ -96,32 +107,32 @@ class Teacher:
 
     @classmethod
     def create(cls, name):
-        """ Create a new teacher instance and save it to the database. """
+        """ Create a new class_name instance and save it to the database. """
 
-        teacher = cls(name)
-        teacher.save()
-        return teacher
+        class_name = cls(name)
+        class_name.save()
+        return class_name
     
     @classmethod
     def instance_from_db(cls, row):
-        """ Return a teacher instance from the database. """
+        """ Return a class_name instance from the database. """
 
-        teacher = cls.all.get(row[0])
-        if teacher:
-            teacher.name = row[1]
+        class_name = cls.all.get(row[0])
+        if class_name:
+            class_name.name = row[1]
         else:
-            teacher = cls(row[1])
-            teacher.id = row[0]
-            cls.all[teacher.id] = teacher
-        return teacher
+            class_name = cls(row[1])
+            class_name.id = row[0]
+            cls.all[class_name.id] = class_name
+        return class_name
     
     @classmethod
     def get_all(cls):
-        """ Return all the teachers in the database. """
+        """ Return all the class_names in the database. """
 
         sql = """
             SELECT * 
-            FROM teachers
+            FROM class_names
         """
         rows = CURSOR.execute(sql).fetchall()
 
@@ -129,11 +140,11 @@ class Teacher:
     
     @classmethod
     def find_by_id(cls, id):
-        """ Return the teacher with the given id. """
+        """ Return the class_name with the given id. """
 
         sql = """
             SELECT * 
-            FROM teachers 
+            FROM class_names 
             WHERE id = ?
         """
         row = CURSOR.execute(sql, (id,)).fetchone()
@@ -142,47 +153,37 @@ class Teacher:
     
     @classmethod
     def find_by_name(cls, name):
-        """ Return the teacher with the given name. """
+        """ Return the class_name with the given name. """
 
         sql = """
             SELECT *
-            FROM teachers
-            WHERE name is ?
+            FROM class_names
+            WHERE name = ?
         """
-        row = CURSOR.execute(sql, (name,)).fetchone()
+        row = CURSOR.execute(sql, (name.title(),)).fetchone()
+
         return cls.instance_from_db(row) if row else None
     
-    def get_classes(self):
-        """ Return all the classes that the teacher has. """
-        from models.class_name import Class_Name
+    def get_teachers(self):
+        """ Return all the teachers for the class. """
 
-        rows = [class_name for class_name in Class_Name.get_all() if class_name.teacher_id == self.id]
+        teacher_class_name_rows = Teacher_Class_Name.find_by_class_name_id(self.id)
+        teacher_rows = [Teacher.find_by_id(row.teacher_id) for row in teacher_class_name_rows]
 
-        return [Class_Name.instance_from_db([row.id, row.name]) for row in rows]
-
+        return [Teacher.instance_from_db([row.id, row.name]) for row in teacher_rows]
+    
     def get_students(self):
-        """ Return all the students that the teacher has. """
-        from models.student import Student
-        from models.student_class_name import Student_Class_Name
+        """ Return all the students for the class. """
 
-        classes = self.get_classes()
+        student_class_name_rows = Student_Class_Name.find_by_class_name_id(self.id)
+        student_rows = [Student.find_by_id(row.student_id) for row in student_class_name_rows]
 
-        student_class_rows = []
-        student_class_rows.extend(Student_Class_Name.find_by_class_name_id(class_.id) for class_ in classes)
-        
-        rows = [Student.find_by_id(row.student_id) for row in student_class_rows]
-        # for student_class_row in student_class_rows:
-        #     for row in student_class_row:
-        #         rows.append(Student.find_by_id(row.student_id))
-
-        students = set([Student.instance_from_db([row.id, row.name]) for row in rows])
-
-        return students
+        return [Student.instance_from_db([row.id, row.name]) for row in student_rows]
     
     def get_reports(self):
         """ Return all the reports for the class. """
         from models.report import Report
 
-        rows = Report.get_teacher_reports(self.id)
+        rows = Report.get_class_reports(self.id)
         
         return [Report.instance_from_db([row.id, row.text, row.class_name_id, row.teacher_id, row.student_id]) for row in rows]

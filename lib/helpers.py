@@ -4,7 +4,7 @@ from models.__init__ import CONN, CURSOR
 from models.teacher import Teacher
 from models.student import Student
 from models.student_class_name import Student_Class_Name
-from models.teacher_class_name import Teacher_Class_Name
+# from models.teacher_class_name import Teacher_Class_Name
 from models.class_name import Class_Name
 from models.report import Report
 
