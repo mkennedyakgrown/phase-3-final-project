@@ -83,7 +83,7 @@ def add_student():
         return
     student = Student(name.title())
     student.save()
-    add_objs(Class_Name, student)
+    student_add_classes(student)
     print("********")
     print(f"New Student Added:")
     print(student)
@@ -102,7 +102,7 @@ def add_teacher():
         return
     teacher = Teacher(name.title())
     teacher.save()
-    add_obj(Class_Name, teacher)
+    add_objs(Class_Name, teacher)
     print("********")
     print(f"New Teacher Added:")
     print(teacher)
@@ -466,13 +466,43 @@ def class_name_add_teacher(class_name):
         else:
             break
 
+def student_add_classes(student):
+    classes_list = Class_Name.get_all()
+    enrolled_classes = student.get_classes()
+    new_classes = []
+    while True:
+        print("********")
+        print("Classes Available:")
+        for item in classes_list:
+            print(item.name)
+        print("********")
+        if len(enrolled_classes) > 0:
+            print("Classes Enrolled:")
+            for item in enrolled_classes:
+                print(item.name)
+        name = input("Enter class name to add to enrollment (or blank to stop):")
+        if name:
+            class_name = Class_Name.find_by_name(name.title())
+            if class_name:
+                new_classes.append(class_name)
+                enrolled_classes.append(class_name)
+            else:
+                print(f"Class {name} not found")
+        else:
+            break
+    
+    for item in new_classes:
+            if Student_Class_Name.find_by_class_name_id_and_student_id(item.id, student.id) is None:
+                student_class_name = Student_Class_Name(item.id, student.id)
+                student_class_name.save()
+
 def add_objs(cls, obj):
     obj_list = cls.get_all()
     objs = set([])
     if cls is Student and obj:
         objs = set(obj.get_students())
-    elif cls is Teacher and obj:
-        objs = set(obj.get_teachers())
+    elif cls is Class_Name and type(obj) is Teacher:
+        objs = set(obj.get_classes())
     elif cls is Class_Name and obj:
         objs = set(obj.get_classes())
     while True:
