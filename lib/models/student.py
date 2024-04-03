@@ -160,8 +160,8 @@ class Student:
 
         student_class_rows = Student_Class_Name.find_by_student_id(self.id)
         rows = [Class_Name.find_by_id(row.class_name_id) for row in student_class_rows]
-
-        return [Class_Name.instance_from_db([row.id, row.name]) for row in rows]
+        
+        return [Class_Name.find_by_id(row.id) for row in rows]
 
     def get_teachers(self):
         """ Return all the teachers that the student has. """
