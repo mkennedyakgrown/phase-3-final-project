@@ -75,6 +75,67 @@ def search_classes():
         print(f"Class {name} not found")
         print("********")
 
+def add_student():
+    print("Add Student:")
+    print("********")
+    name = select_name(Student)
+    if name == "":
+        return
+    student = Student(name.title())
+    student.save()
+    add_objs(Class_Name, student)
+    print("********")
+    print(f"New Student Added:")
+    print(student)
+    print("Classes:")
+    classes = student.get_classes()
+    for item in classes:
+        print("    * ", item)
+        print("      * Teacher:", item.get_teacher().name)
+    print("********")
+
+def add_teacher():
+    print("Add Teacher:")
+    print("********")
+    name = select_name(Teacher)
+    if name == "":
+        return
+    teacher = Teacher(name.title())
+    teacher.save()
+    add_obj(Class_Name, teacher)
+    print("********")
+    print(f"New Teacher Added:")
+    print(teacher)
+    print("Classes:")
+    classes = teacher.get_classes()
+    for item in classes:
+        print("    * ", item)
+    print("Students:")
+    students = teacher.get_students()
+    for item in students:
+        print("    * ", item)
+    print("********")
+
+def add_class_name():
+    print("Add Class:")
+    print("********")
+    name = select_name(Class_Name)
+    if name == "":
+        return
+    print("********")
+    teacher = select_obj(Teacher)
+    class_name = Class_Name(name.title(), teacher)
+    class_name.save()
+    print("********")
+    print(f"New Class Added:")
+    print(class_name)
+    print("Teacher:")
+    print("    * ", class_name.get_teacher().name)
+    print("Students:")
+    students = class_name.get_students()
+    for item in students:
+        print("    * ", item)
+
 def add_obj(cls):
     print(f"Add {cls.__name__}:")
     print("********")
@@ -385,6 +446,26 @@ def select_obj(cls, obj_list=[]):
             break
     return obj
 
+def class_name_add_teacher(class_name):
+    teachers_list = Teacher.get_all()
+    while True:
+        print("********")
+        print("Teachers Available:")
+        for item in teachers_list:
+            print(item.name)
+        print("********")
+        name = input("Enter teacher name to add to class (or blank to stop):")
+        if name:
+            teacher = Teacher.find_by_name(name.title())
+            if teacher:
+                class_name.teacher_id = teacher.id
+                class_name.update()
+                break
+            else:
+                print(f"Teacher {name} not found")
+        else:
+            break
+
 def add_objs(cls, obj):
     obj_list = cls.get_all()
     objs = set([])
@@ -557,9 +638,9 @@ admin_add_menu = {
     • Teacher
     • Student
     • Class""",
-    "teacher": [add_obj, Teacher],
-    "student": [add_obj, Student],
-    "class": [add_obj, Class_Name]
+    "teacher": add_teacher,
+    "student": add_student,
+    "class": add_class_name
 }
 
 admin_update_menu = {
@@ -594,9 +675,9 @@ admin_menu = {
     "classes info": admin_classes_info_menu,
     "reports info": admin_reports_info_menu,
     "add": admin_add_menu,
-    "add teacher": [add_obj, Teacher],
-    "add student": [add_obj, Student],
-    "add class": [add_obj, Class_Name],
+    "add teacher": add_teacher,
+    "add student": add_student,
+    "add class": add_class_name,
     "update": admin_update_menu,
     "update teacher": [update_obj, Teacher],
     "update student": [update_obj, Student],
