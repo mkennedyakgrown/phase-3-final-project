@@ -48,7 +48,7 @@ def search_students(name=""):
         print("Classes:")
         for item in classes:
             print(f"    * {item.name}")
-            print(f"        Teacher: {item.get_teacher().name}")
+            print(f"        Teacher: {item.get_teacher_name()}")
         print("********")
     else:
         print("********")
@@ -64,7 +64,7 @@ def search_classes():
     if class_name:
         print("********")
         print("Teacher:")
-        print(f"    * {class_name.get_teacher().name}")
+        print(f"    * {class_name.get_teacher_name()}")
         students = class_name.get_students()
         print("Student(s):")
         for item in students:
@@ -91,7 +91,7 @@ def add_student():
     classes = student.get_classes()
     for item in classes:
         print("    * ", item)
-        print("      * Teacher:", item.get_teacher().name)
+        print("      * Teacher:", item.get_teacher_name())
     print("********")
 
 def add_teacher():
@@ -102,7 +102,7 @@ def add_teacher():
         return
     teacher = Teacher(name.title())
     teacher.save()
-    add_objs(Class_Name, teacher)
+    teacher_add_classes(teacher)
     print("********")
     print(f"New Teacher Added:")
     print(teacher)
@@ -124,57 +124,65 @@ def add_class_name():
         return
     print("********")
     teacher = select_obj(Teacher)
-    class_name = Class_Name(name.title(), teacher)
+    if not teacher:
+        class_name = Class_Name(name.title())
+    else:
+        class_name = Class_Name(name.title(), teacher.id)
     class_name.save()
+    students = add_objs(Student, class_name)
     print("********")
     print(f"New Class Added:")
     print(class_name)
     print("Teacher:")
-    print("    * ", class_name.get_teacher().name)
+    teacher = class_name.get_teacher()
+    if teacher:
+        print("    * ", teacher)
+    else:
+        print("    * None")
     print("Students:")
     students = class_name.get_students()
     for item in students:
         print("    * ", item)
 
-def add_obj(cls):
-    print(f"Add {cls.__name__}:")
-    print("********")
-    name = select_name(cls)
-    if name == "":
-        return
-    obj = cls(name.title())
-    obj.save()
-    if cls is Teacher or cls is Student:
-        add_objs(Class_Name, obj)
-    if cls is Class_Name:
-        add_objs(Teacher, obj)
-        add_objs(Student, obj)
-    print("********")
-    print(f"New {cls.__name__} Added:")
-    print(obj)
-    if cls is Teacher:
-        print("Teachers:")
-        classes = obj.get_classes()
-        students = obj.get_students()
-        print("Classes:")
-        for item in classes:
-            print("    * ", item)
-        print("Students:")
-        for item in students:
-            print("    * ", item)
-    if cls is Student:
-        print("Classes:")
-        classes = obj.get_classes()
-        for item in classes:
-            print("    * ", item)
-    if cls is Class_Name:
-        print("Teacher:")
-        print("    * ", obj.get_teacher().name)
-        students = obj.get_students()
-        print("Students:")
-        for item in students:
-            print("    * ", item)
-    print("********")
+# def add_obj(cls):
+#     print(f"Add {cls.__name__}:")
+#     print("********")
+#     name = select_name(cls)
+#     if name == "":
+#         return
+#     obj = cls(name.title())
+#     obj.save()
+#     if cls is Teacher or cls is Student:
+#         add_objs(Class_Name, obj)
+#     if cls is Class_Name:
+#         add_objs(Teacher, obj)
+#         add_objs(Student, obj)
+#     print("********")
+#     print(f"New {cls.__name__} Added:")
+#     print(obj)
+#     if cls is Teacher:
+#         print("Teachers:")
+#         classes = obj.get_classes()
+#         students = obj.get_students()
+#         print("Classes:")
+#         for item in classes:
+#             print("    * ", item)
+#         print("Students:")
+#         for item in students:
+#             print("    * ", item)
+#     if cls is Student:
+#         print("Classes:")
+#         classes = obj.get_classes()
+#         for item in classes:
+#             print("    * ", item)
+#     if cls is Class_Name:
+#         print("Teacher:")
+#         print("    * ", obj.get_teacher().name)
+#         students = obj.get_students()
+#         print("Students:")
+#         for item in students:
+#             print("    * ", item)
+#     print("********")
 
 def admin_search_reports(cls):
     if cls is Class_Name:
@@ -211,15 +219,13 @@ def admin_remaining_reports():
     print("Remaining reports:")
     classes = Class_Name.get_all()
     for class_name in classes:
-        teachers = class_name.get_teachers()
         students = class_name.get_students()
         reports = Report.get_class_reports(class_name.id)
         print(f"Class {class_name.name}:")
-        for teacher in teachers:
-            print(f"Teacher {teacher.name}:")
-            for student in students:
-                if student.id not in [report.student_id for report in reports]:
-                    print(f"    * {student.name}")
+        print(f"Teacher {class_name.get_teacher_name()}:")
+        for student in students:
+            if student.id not in [report.student_id for report in reports]:
+                print(f"    * {student.name}")
         print("********")
         
 
@@ -496,6 +502,30 @@ def student_add_classes(student):
                 student_class_name = Student_Class_Name(item.id, student.id)
                 student_class_name.save()
 
+def teacher_add_classes(teacher):
+    classes_list = Class_Name.get_all()
+    classes_list = [class_name for class_name in classes_list if class_name.teacher_id == 0]
+    new_classes = []
+    while True:
+        print("********")
+        print("Classes Available:")
+        for item in classes_list:
+            print(item.name)
+        print("********")
+        name = input("Enter class name to add to enrollment (or blank to stop):")
+        if name:
+            class_name = Class_Name.find_by_name(name.title())
+            if class_name:
+                new_classes.append(class_name)
+            else:
+                print(f"Class {name} not found")
+        else:
+            break
+
+    for item in new_classes:
+        item.teacher_id = teacher.id
+        item.update()
+
 def add_objs(cls, obj):
     obj_list = cls.get_all()
     objs = set([])
@@ -531,19 +561,11 @@ def add_objs(cls, obj):
             if Student_Class_Name.find_by_class_name_id_and_student_id(item.id, obj.id) is None:
                 student_class_name = Student_Class_Name(item.id, obj.id)
                 student_class_name.save()
-    # if type(obj) is Teacher:
-    #     for item in objs:
-    #         if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, obj.id) is None:
-    #             teacher_class_name = Teacher_Class_Name(item.id, obj.id)
-    #             teacher_class_name.save()
-    # if type(obj) is Class_Name:
-    #     for item in objs:
-    #         if cls is Student and Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id) is None:
-    #             student_class_name = Student_Class_Name(obj.id, item.id)
-    #             student_class_name.save()
-    #         if cls is Teacher and Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id) is None:
-    #             teacher_class_name = Teacher_Class_Name(obj.id, item.id)
-    #             teacher_class_name.save()
+    if type(obj) is Class_Name:
+        for item in objs:
+            if Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id) is None:
+                student_class_name = Student_Class_Name(obj.id, item.id)
+                student_class_name.save()
 
 def remove_objs(cls, obj):
     curr_objs = set([])

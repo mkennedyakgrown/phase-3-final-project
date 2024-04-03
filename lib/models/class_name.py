@@ -38,8 +38,9 @@ class Class_Name:
     
     @teacher_id.setter
     def teacher_id(self, teacher_id):
-        if isinstance(teacher_id, int) and Teacher.find_by_id(teacher_id) is not None:
-            self._teacher_id = teacher_id
+        if isinstance(teacher_id, int) or teacher_id == 0:
+            if teacher_id == 0 or Teacher.find_by_id(teacher_id) is not None:
+                self._teacher_id = teacher_id
         else:
             raise ValueError(
                 "Teacher ID must be a positive integer."
@@ -88,7 +89,7 @@ class Class_Name:
             SET name = ?, teacher_id = ?
             WHERE id = ?
         """
-        CURSOR.execute(sql, (self.name, self.id))
+        CURSOR.execute(sql, (self.name, self.teacher_id, self.id))
         CONN.commit()
 
     def delete(self):
@@ -174,8 +175,15 @@ class Class_Name:
     
     def get_teacher(self):
         """ Return  the teacher for the class. """
-
+        
         return Teacher.find_by_id(self.teacher_id)
+    
+    def get_teacher_name(self):
+        """ Return the name of the teacher for the class. """
+        if self.teacher_id == 0:
+            return "None"
+        else:
+            return self.get_teacher().name
     
     def get_students(self):
         """ Return all the students for the class. """
