@@ -4,7 +4,6 @@ from models.__init__ import CONN, CURSOR
 from models.teacher import Teacher
 from models.student import Student
 from models.class_name import Class_Name
-from models.teacher_class_name import Teacher_Class_Name
 from models.student_class_name import Student_Class_Name
 from models.report import Report
 
@@ -12,14 +11,12 @@ def seed_database():
     Teacher.drop_table()
     Student.drop_table()
     Class_Name.drop_table()
-    Teacher_Class_Name.drop_table()
     Student_Class_Name.drop_table()
     Report.drop_table()
 
     Teacher.create_table()
     Student.create_table()
     Class_Name.create_table()
-    Teacher_Class_Name.create_table()
     Student_Class_Name.create_table()
     Report.create_table()
 
@@ -40,26 +37,14 @@ def seed_database():
     Student.create("Michael Thompson")
     Student.create("Emily Anderson")
 
-    Class_Name.create("Ballet 4")
-    Class_Name.create("Tap 5")
-    Class_Name.create("Ballet Partnering")
-    Class_Name.create("Jazz/Lyrical 2")
-    Class_Name.create("Latin Rhythm/Ballroom")
-    Class_Name.create("Hip Hop 8")
-    Class_Name.create("Adv. Clogging")
-    Class_Name.create("Pointe 1")
-
-    Teacher_Class_Name.create(1, 1)
-    Teacher_Class_Name.create(1, 2)
-    Teacher_Class_Name.create(2, 2)
-    Teacher_Class_Name.create(3, 1)
-    Teacher_Class_Name.create(3, 3)
-    Teacher_Class_Name.create(4, 4)
-    Teacher_Class_Name.create(5, 5)
-    Teacher_Class_Name.create(5, 6)
-    Teacher_Class_Name.create(6, 6)
-    Teacher_Class_Name.create(7, 5)
-    Teacher_Class_Name.create(8, 4)
+    Class_Name.create("Ballet 4", 1)
+    Class_Name.create("Tap 5", 3)
+    Class_Name.create("Ballet Partnering", 4)
+    Class_Name.create("Jazz/Lyrical 2", 5)
+    Class_Name.create("Latin Rhythm/Ballroom", 6)
+    Class_Name.create("Hip Hop 8", 2)
+    Class_Name.create("Adv. Clogging", 3)
+    Class_Name.create("Pointe 1", 1)
 
     Student_Class_Name.create(1, 1)
     Student_Class_Name.create(1, 2)
@@ -99,14 +84,14 @@ def seed_database():
     Student_Class_Name.create(8, 7)
     Student_Class_Name.create(8, 8)
 
-    Report.create("Report 1", 1, 2, 2)
-    Report.create("Report for Tap 5, student Richard Johnson, teacher Felicia Jones", 2, 2, 5)
-    Report.create("Report for Ballet Partnering, student Jane Smith, teacher Todd Brown", 3, 2, 3)
-    Report.create("Report for Jazz/Lyrical 2, student Michael Thompson, teacher Aubrey Miller", 4, 4, 7)
-    Report.create("Report for Latin Rhythm/Ballroom, student John Doe, teacher Miles Davis", 5, 6, 3)
-    Report.create("Report for Hip Hop 8, student Michael Thompson, teacher Miles Davis", 6, 6, 7)
-    Report.create("Report for Adv. Clogging, student Sarah Davis, teacher Trevor Wilson", 7, 5, 6)
-    Report.create("Report for Pointe 1, student Jane Doe, teacher Aubrey Miller", 8, 4, 4)
+    Report.create("Report 1", 1, 2)
+    Report.create("Report for Tap 5, student Richard Johnson, teacher Felicia Jones", 2, 5)
+    Report.create("Report for Ballet Partnering, student Jane Smith, teacher Todd Brown", 3, 3)
+    Report.create("Report for Jazz/Lyrical 2, student Michael Thompson, teacher Aubrey Miller", 4, 7)
+    Report.create("Report for Latin Rhythm/Ballroom, student John Doe, teacher Miles Davis", 5, 3)
+    Report.create("Report for Hip Hop 8, student Michael Thompson, teacher Miles Davis", 6, 7)
+    Report.create("Report for Adv. Clogging, student Sarah Davis, teacher Trevor Wilson", 7, 6)
+    Report.create("Report for Pointe 1, student Jane Doe, teacher Aubrey Miller", 8, 4)
 
 seed_database()
 print("Database seeded.")

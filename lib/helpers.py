@@ -48,6 +48,7 @@ def search_students(name=""):
         print("Classes:")
         for item in classes:
             print(f"    * {item.name}")
+            print(f"        Teacher: {item.get_teacher().name}")
         print("********")
     else:
         print("********")
@@ -61,11 +62,9 @@ def search_classes():
         return
     class_name = Class_Name.find_by_name(name.title())
     if class_name:
-        teachers = class_name.get_teachers()
         print("********")
-        print("Teacher(s):")
-        for item in teachers:
-            print(f"    * {item.name}")
+        print("Teacher:")
+        print(f"    * {class_name.get_teacher().name}")
         students = class_name.get_students()
         print("Student(s):")
         for item in students:
@@ -108,10 +107,8 @@ def add_obj(cls):
         for item in classes:
             print("    * ", item)
     if cls is Class_Name:
-        teachers = obj.get_teachers()
-        print("Teachers:")
-        for item in teachers:
-            print("    * ", item)
+        print("Teacher:")
+        print("    * ", obj.get_teacher().name)
         students = obj.get_students()
         print("Students:")
         for item in students:
@@ -429,19 +426,19 @@ def add_objs(cls, obj):
             if Student_Class_Name.find_by_class_name_id_and_student_id(item.id, obj.id) is None:
                 student_class_name = Student_Class_Name(item.id, obj.id)
                 student_class_name.save()
-    if type(obj) is Teacher:
-        for item in objs:
-            if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, obj.id) is None:
-                teacher_class_name = Teacher_Class_Name(item.id, obj.id)
-                teacher_class_name.save()
-    if type(obj) is Class_Name:
-        for item in objs:
-            if cls is Student and Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id) is None:
-                student_class_name = Student_Class_Name(obj.id, item.id)
-                student_class_name.save()
-            if cls is Teacher and Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id) is None:
-                teacher_class_name = Teacher_Class_Name(obj.id, item.id)
-                teacher_class_name.save()
+    # if type(obj) is Teacher:
+    #     for item in objs:
+    #         if Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, obj.id) is None:
+    #             teacher_class_name = Teacher_Class_Name(item.id, obj.id)
+    #             teacher_class_name.save()
+    # if type(obj) is Class_Name:
+    #     for item in objs:
+    #         if cls is Student and Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id) is None:
+    #             student_class_name = Student_Class_Name(obj.id, item.id)
+    #             student_class_name.save()
+    #         if cls is Teacher and Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id) is None:
+    #             teacher_class_name = Teacher_Class_Name(obj.id, item.id)
+    #             teacher_class_name.save()
 
 def remove_objs(cls, obj):
     curr_objs = set([])
@@ -473,15 +470,15 @@ def remove_objs(cls, obj):
     if type(obj) is Student:
         for item in remove_objs_set:
             Student_Class_Name.find_by_class_name_id_and_student_id(item.id, obj.id).delete()
-    if type(obj) is Teacher:
-        for item in remove_objs_set:
-            Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, obj.id).delete()
-    if type(obj) is Class_Name:
-        for item in remove_objs_set:
-            if cls is Student:
-                Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id).delete()
-            elif cls is Teacher:
-                Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id).delete()
+    # if type(obj) is Teacher:
+    #     for item in remove_objs_set:
+    #         Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, obj.id).delete()
+    # if type(obj) is Class_Name:
+    #     for item in remove_objs_set:
+    #         if cls is Student:
+    #             Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id).delete()
+    #         elif cls is Teacher:
+    #             Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id).delete()
 
     return
 

@@ -163,16 +163,15 @@ class Student:
 
         return [Class_Name.instance_from_db([row.id, row.name]) for row in rows]
 
-    def get_students(self):
-        """ Return all the students that the teacher has. """
+    def get_teachers(self):
+        """ Return all the teachers that the student has. """
         from models.teacher import Teacher
-        from models.teacher_class_name import Teacher_Class_Name
         
         classes = self.get_classes()
 
-        rows = Teacher_Class_Name.find_by_class_name_id(classes)
+        rows = [class_name.get_teacher() for class_name in classes]
 
-        return [Teacher.instance_from_db(row[2]) for row in rows]
+        return [Teacher.instance_from_db(row) for row in rows]
     
     def get_reports(self):
         """ Return all the reports for the student. """

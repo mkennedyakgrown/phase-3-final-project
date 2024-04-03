@@ -155,10 +155,9 @@ class Teacher:
     def get_classes(self):
         """ Return all the classes that the teacher has. """
         from models.class_name import Class_Name
+        class_names = Class_Name.get_all()
 
-        rows = [class_name for class_name in Class_Name.get_all() if class_name.teacher_id == self.id]
-
-        return [Class_Name.instance_from_db([row.id, row.name]) for row in rows]
+        return [class_name for class_name in class_names if class_name.teacher_id == self.id]
 
     def get_students(self):
         """ Return all the students that the teacher has. """
@@ -170,10 +169,10 @@ class Teacher:
         student_class_rows = []
         student_class_rows.extend(Student_Class_Name.find_by_class_name_id(class_.id) for class_ in classes)
         
-        rows = [Student.find_by_id(row.student_id) for row in student_class_rows]
-        # for student_class_row in student_class_rows:
-        #     for row in student_class_row:
-        #         rows.append(Student.find_by_id(row.student_id))
+        rows = []
+        for student_class_row in student_class_rows:
+            for row in student_class_row:
+                rows.append(Student.find_by_id(row.student_id))
 
         students = set([Student.instance_from_db([row.id, row.name]) for row in rows])
 

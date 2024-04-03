@@ -87,7 +87,7 @@ class Report:
         """ Save the report to the database. """
 
         sql = """
-            INSERT INTO reports (text, class_name_id, teacher_id, student_id)
+            INSERT INTO reports (text, class_name_id, student_id)
             VALUES (?, ?, ?)
         """
         CURSOR.execute(sql, (self.text, self.class_name_id, self.student_id))

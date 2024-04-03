@@ -71,8 +71,8 @@ class Class_Name:
         """ Save the class_name to the database. """
 
         sql = """
-            INSERT INTO class_names (name)
-            VALUES (?)
+            INSERT INTO class_names (name, teacher_id)
+            VALUES (?, ?)
         """
         CURSOR.execute(sql, (self.name, self.teacher_id,))
         CONN.commit()
@@ -123,16 +123,16 @@ class Class_Name:
     @classmethod
     def instance_from_db(cls, row):
         """ Return a class_name instance from the database. """
-
+        
         class_name = cls.all.get(row[0])
         if class_name:
             class_name.name = row[1]
+            class_name.teacher_id = row[2]
         else:
-            class_name = cls(row[1])
-            teacher_id = cls(row[2])
+            class_name = cls(row[1], row[2])
             class_name.id = row[0]
-            cls.all[class_name.id] = [class_name, teacher_id]
-        return [class_name, teacher_id]
+            cls.all[class_name.id] = class_name
+        return class_name
     
     @classmethod
     def get_all(cls):
