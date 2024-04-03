@@ -120,9 +120,6 @@ def admin_search_reports(cls):
         class_name = select_obj(cls)
         if class_name is None:
             return
-        teacher = select_obj(Teacher, class_name.get_teachers())
-        if teacher is None:
-            return
         student = select_obj(Student, class_name.get_students())
         if student is None:
             return
@@ -143,10 +140,7 @@ def admin_search_reports(cls):
         class_name = select_obj(Class_Name, student.get_classes())
         if class_name is None:
             return
-        teacher = select_obj(Teacher, class_name.get_teachers())
-        if teacher is None:
-            return
-    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    report = Report.find_by_ids(class_name.id, student.id)
     if report:
         print(report)
     else:

@@ -15,7 +15,7 @@ class Report:
 
     def __repr__(self):
         return (
-            f"""Report {self.id}: Class: {self.class_name_id} Teacher: {self.teacher_id} Student: {self.student_id}
+            f"""Report {self.id}: Class: {self.class_name_id} Student: {self.student_id}
         {self.text}"""
         )
     
