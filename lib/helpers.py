@@ -262,8 +262,14 @@ def teacher_write_report():
     teacher = select_obj(Teacher)
     if teacher is None:
         return
+    if teacher.get_classes() == []:
+        print("No classes found")
+        return
     class_name = select_obj(Class_Name, teacher.get_classes())
     if class_name is None:
+        return
+    if class_name.get_students() == []:
+        print("No students found")
         return
     student = select_obj(Student, class_name.get_students())
     if student is None:
