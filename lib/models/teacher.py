@@ -74,7 +74,12 @@ class Teacher:
         CONN.commit()
 
     def delete(self):
-        """ Delete the teacher from the database. """
+        """ Delete the teacher from the database and remove any associations. """
+
+        classes = self.get_classes()
+        for class_name in classes:
+            class_name.teacher_id = 0
+            class_name.update()
 
         sql = """
             DELETE FROM teachers

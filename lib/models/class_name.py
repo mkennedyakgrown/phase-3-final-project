@@ -95,6 +95,10 @@ class Class_Name:
     def delete(self):
         """ Delete the class_name from the database. """
 
+        reports = self.get_reports()
+        for report in reports:
+            report.delete()
+
         sql = """
             DELETE FROM class_names
             WHERE id = ?

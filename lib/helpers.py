@@ -355,11 +355,6 @@ def delete_row(cls, row):
     if name == "":
         return
     obj = cls.find_by_name(name.title())
-    if type(obj) == Teacher:
-        classes = obj.get_classes()
-        for class_name in classes:
-            class_name.teacher_id = 0
-            class_name.update()
     if obj:
         obj.delete()
         print(f"{cls.__name__} {name} deleted")

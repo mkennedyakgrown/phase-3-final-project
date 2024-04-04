@@ -76,6 +76,10 @@ class Student:
     def delete(self):
         """ Delete the student from the database. """
 
+        reports = self.get_reports()
+        for report in reports:
+            report.delete()
+
         sql = """
             DELETE FROM students
             WHERE id = ?
