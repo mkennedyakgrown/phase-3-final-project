@@ -200,19 +200,21 @@ class Report:
         return [cls.instance_from_db(row) for row in rows]
     
     @classmethod
-    def get_teacher_reports(cls, teacher_id):
+    def get_teacher_reports(cls, teacher):
         """ Return all the reports for the given teacher_id. """
-        from teacher import get_classes
+        from models.teacher import Teacher
 
-        class_name_ids = [class_name_id for class_name_id in get_classes(teacher_id)]
+        class_name_ids = [class_name.id for class_name in teacher.get_classes()]
         
         sql = """
             SELECT *
             FROM reports
             WHERE class_name_id = ?
         """
-        rows = [CURSOR.execute(sql, (class_name_id,)).fetchall() for class_name_id in class_name_ids]
-
+        rows = []
+        for class_name_id in class_name_ids:
+            rows.extend(CURSOR.execute(sql, (class_name_id,)).fetchall())
+        
         return [cls.instance_from_db(row) for row in rows]
     
     @classmethod

@@ -268,7 +268,7 @@ def teacher_write_report():
     student = select_obj(Student, class_name.get_students())
     if student is None:
         return
-    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    report = Report.find_by_ids(class_name.id, student.id)
     if report is not None:
         enter_text_editor(report.text)
         report.text = get_text()
@@ -277,7 +277,7 @@ def teacher_write_report():
     else:
         enter_text_editor()
         report = get_text()
-        new_report = Report.create(report, class_name.id, teacher.id, student.id)
+        new_report = Report.create(report, class_name.id, student.id)
         print(f"Report created: {new_report}")
 
 def teacher_delete_report():
@@ -290,7 +290,7 @@ def teacher_delete_report():
     student = select_obj(Student, class_name.get_students())
     if student is None:
         return
-    report = Report.find_by_ids(class_name.id, teacher.id, student.id)
+    report = Report.find_by_ids(class_name.id, student.id)
     if report is not None:
         report.delete()
         print(f"Report deleted: {report}")
@@ -321,7 +321,8 @@ def student_view_reports():
     reports = student.get_reports()
     print("********")
     for item in reports:
-        print(f"Class: {Class_Name.find_by_id(item.class_name_id).name}, Teacher: {Teacher.find_by_id(item.teacher_id).name}")
+        class_name = Class_Name.find_by_id(item.class_name_id)
+        print(f"Class: {class_name.name}, Teacher: {class_name.get_teacher_name()}")
         print(f"Report: {item.text}")
     if reports == []:
         print("No reports found")
@@ -640,16 +641,7 @@ def remove_objs(cls, obj):
     if type(obj) is Student:
         for item in remove_objs_set:
             Student_Class_Name.find_by_class_name_id_and_student_id(item.id, obj.id).delete()
-    # if type(obj) is Teacher:
-    #     for item in remove_objs_set:
-    #         Teacher_Class_Name.find_by_class_name_id_and_teacher_id(item.id, obj.id).delete()
-    # if type(obj) is Class_Name:
-    #     for item in remove_objs_set:
-    #         if cls is Student:
-    #             Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id).delete()
-    #         elif cls is Teacher:
-    #             Teacher_Class_Name.find_by_class_name_id_and_teacher_id(obj.id, item.id).delete()
-
+    
     return
 
 ############# ADMIN MENUS #############

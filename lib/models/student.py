@@ -179,4 +179,4 @@ class Student:
 
         rows = Report.get_student_reports(self.id)
         
-        return [Report.instance_from_db([row.id, row.text, row.class_name_id, row.teacher_id, row.student_id]) for row in rows]
+        return [Report.instance_from_db([row.id, row.text, row.class_name_id, row.student_id]) for row in rows]
