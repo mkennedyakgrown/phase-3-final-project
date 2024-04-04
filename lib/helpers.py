@@ -392,7 +392,7 @@ def update_obj(cls, obj=None):
     print("********")
     print(f"Updating {obj.name}")
     while True:
-        if cls is Teacher or cls is Student:
+        if cls is Student:
             print("""What do you want to update?:
     • Name
     • Add Classes
@@ -407,12 +407,29 @@ def update_obj(cls, obj=None):
                 remove_objs(Class_Name, obj)
             elif choice == "exit":
                 break
-        else:
+        elif cls is Teacher:
             print("""What do you want to update?:
     • Name
-    • Add Teachers
-    • Remove Teachers
-    • Add Students
+    • Add Classes
+    • Remove Classes
+    • Exit""")
+            choice = input("Select:").lower()
+            if choice == "name":
+                update_name(obj)
+            elif choice == "add classes" or choice == "add":
+                teacher_add_classes(obj)
+            elif choice == "remove classes" or choice == "remove":
+                teacher_remove_classes(obj)
+            elif choice == "exit":
+                break
+        else:
+            print("""What do you want to update?:
+    • Name""")
+            if obj.teacher_id == 0:
+                print("    • Add Teachers")
+            if obj.teacher_id != 0:
+                print("    • Remove Teacher")
+            print("""    • Add Students
     • Remove Students
     • Exit""")
             choice = input("Select:").lower()
@@ -566,6 +583,25 @@ def add_objs(cls, obj):
             if Student_Class_Name.find_by_class_name_id_and_student_id(obj.id, item.id) is None:
                 student_class_name = Student_Class_Name(obj.id, item.id)
                 student_class_name.save()
+
+def teacher_remove_classes(teacher):
+    while True:
+        print("********")
+        print("Classes Available:")
+        classes_list = teacher.get_classes()
+        for item in classes_list:
+            print(item.name)
+        print("********")
+        name = input("Enter class name to remove from enrollment (or blank to stop):")
+        if name:
+            class_name = Class_Name.find_by_name(name.title())
+            if class_name:
+                class_name.teacher_id = 0
+                class_name.update()
+            else:
+                print(f"Class {name} not found")
+        else:
+            break
 
 def remove_objs(cls, obj):
     curr_objs = set([])
