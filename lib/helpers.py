@@ -422,11 +422,11 @@ def update_obj(cls, obj=None):
                 teacher_remove_classes(obj)
             elif choice == "exit":
                 break
-        else:
+        elif cls is Class_Name:
             print("""What do you want to update?:
     • Name""")
             if obj.teacher_id == 0:
-                print("    • Add Teachers")
+                print("    • Add Teacher")
             if obj.teacher_id != 0:
                 print("    • Remove Teacher")
             print("""    • Add Students
@@ -435,10 +435,12 @@ def update_obj(cls, obj=None):
             choice = input("Select:").lower()
             if choice == "name":
                 update_name(obj)
-            elif choice == "add teachers":
-                add_objs(Teacher, obj)
-            elif choice == "remove teachers":
-                remove_objs(Teacher, obj)
+            elif choice == "add teacher":
+                class_name_add_teacher(obj)
+            elif choice == "remove teacher":
+                obj.teacher_id = 0
+                obj.update()
+                print("Teacher removed")
             elif choice == "add students":
                 add_objs(Student, obj)
             elif choice == "remove students":
